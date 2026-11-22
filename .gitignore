@@ -27,3 +27,7 @@ docs/*.pdf
 docs/report.html
 experiments/report_assets/
 experiments/infer*/
+
+node_modules/
+docs/slides/*.pptx
+experiments/*.log

@@ -40,7 +40,7 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 - [x] Tests: gradcheck, optimizers reduce loss, shapes
 
 ### 4. Main pipeline + purity (⏱ 60 min) 💻
-- [ ] `wastectl/purity.py`: count-based purity, contamination flag, 30-frame window, conf thresholds. Unit-tested on toy detections
+- [x] `wastectl/purity.py`: count-based purity, contamination flag, 30-frame window, conf thresholds. Unit-tested on toy detections
 - [ ] `vision/pipeline.py`: YOLO-seg → crops → classifier → per-class semantic map → purity. Works on an image and on an image sequence/video
 - [ ] `infer` CLI → annotated image/video + JSON
 

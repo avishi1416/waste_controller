@@ -196,8 +196,8 @@ Checked: WaRP README (AIRI-Institute/WaRP, GitHub licence field: none) and TACO 
   (a) **SAM pseudo-masks:** Ultralytics' built-in `auto_annotate` prompts SAM with each WaRP-D box to produce masks. YOLO-seg then trains on WaRP-D + TACO, and mask IoU is measured on WaRP-S's **real** masks (which exist for exactly this purpose). Pseudo-labels are documented as such.
   (b) Detection-only YOLO on WaRP, and segmentation learned from TACO only (outdoor images).
   (c) Train segmentation only on TACO + WaRP-S's 112 images.
-  — Proposed: (a). — **OPEN**
-- **Q29.** `soft_plastic` exists only in TACO, so it can't appear in the WaRP-only test set. — Proposed: keep the class; report its metrics on TACO's validation split, clearly labelled as out-of-domain. — **OPEN**
+  — **ANSWERED: (a) SAM pseudo-masks**, validated on WaRP-S real masks.
+- **Q29.** `soft_plastic` exists only in TACO, so it can't appear in the WaRP-only test set. — Proposed: keep the class; report its metrics on TACO's validation split, clearly labelled as out-of-domain. — **ANSWERED: yes**
 - **Q30.** Proposed class mapping (needs approval):
   - WaRP: `bottle-*` (17) → rigid_plastic; `detergent-*` (4) → rigid_plastic; `canister` → rigid_plastic; `cans` → metal; `juice-cardboard`/`milk-cardboard` → cardboard (these are drink cartons; flagged); `glass-*` (3) → other.
   - TACO → cardboard: Corrugated carton, Other carton, Egg carton, Meal carton, Pizza box, Toilet tube.

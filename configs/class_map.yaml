@@ -1,0 +1,92 @@
+# Source label -> unified class. Unified classes: cardboard, soft_plastic, rigid_plastic, metal, other.
+# Owner decisions: CLAUDE.md section 2. Items marked "Q30" are proposals awaiting owner approval.
+# `warp` uses glob patterns (first match wins); `taco` and `trashnet` use exact names.
+# Every source label MUST map; unknown labels make `data prepare` fail loudly.
+
+warp:
+  - ["bottle-*", rigid_plastic]
+  - ["detergent-box", cardboard]        # Q30: likely a cardboard powder box; confirm after viewing images
+  - ["detergent-*", rigid_plastic]
+  - ["canister", rigid_plastic]
+  - ["cans", metal]
+  - ["*-cardboard", cardboard]          # Q30: juice/milk cartons (composite), labelled cardboard by WaRP
+  - ["glass-*", other]
+  # WaRP-C group folders, in case crops sit directly under a group directory
+  - ["bottle", rigid_plastic]
+  - ["detergent", rigid_plastic]
+  - ["cardboard", cardboard]
+
+taco:
+  # cardboard
+  Corrugated carton: cardboard
+  Other carton: cardboard
+  Egg carton: cardboard
+  Meal carton: cardboard
+  Pizza box: cardboard
+  Toilet tube: cardboard
+  # soft plastic
+  Plastic film: soft_plastic
+  Other plastic wrapper: soft_plastic
+  Garbage bag: soft_plastic
+  Single-use carrier bag: soft_plastic
+  Polypropylene bag: soft_plastic
+  Crisp packet: soft_plastic
+  Six pack rings: soft_plastic
+  Plastic glooves: soft_plastic           # sic: TACO's spelling
+  # rigid plastic
+  Clear plastic bottle: rigid_plastic
+  Other plastic bottle: rigid_plastic
+  Plastic bottle cap: rigid_plastic
+  Plastic lid: rigid_plastic
+  Disposable plastic cup: rigid_plastic
+  Other plastic cup: rigid_plastic
+  Spread tub: rigid_plastic
+  Tupperware: rigid_plastic
+  Disposable food container: rigid_plastic
+  Other plastic container: rigid_plastic
+  Plastic utensils: rigid_plastic
+  Plastic straw: rigid_plastic
+  Squeezable tube: rigid_plastic
+  # metal
+  Drink can: metal
+  Food Can: metal
+  Aerosol: metal
+  Metal bottle cap: metal
+  Metal lid: metal
+  Pop tab: metal
+  Scrap metal: metal
+  Aluminium foil: metal
+  Aluminium blister pack: metal
+  # other (glass, paper, composites, foam, non-recyclables)
+  Glass bottle: other
+  Broken glass: other
+  Glass cup: other
+  Glass jar: other
+  Magazine paper: other
+  Tissues: other
+  Wrapping paper: other
+  Normal paper: other
+  Paper bag: other
+  Plastified paper bag: other
+  Paper cup: other
+  Paper straw: other
+  Drink carton: other
+  Foam cup: other
+  Foam food container: other
+  Styrofoam piece: other
+  Other plastic: other                    # Q30: ambiguous material
+  Battery: other
+  Carded blister pack: other
+  Food waste: other
+  Rope & strings: other
+  Shoe: other
+  Cigarette: other                        # Q30: 667 tiny items, will dominate `other`
+  Unlabeled litter: other                 # Q30: 517 items
+
+trashnet:
+  cardboard: cardboard
+  plastic: rigid_plastic
+  metal: metal
+  glass: other
+  paper: other
+  trash: other

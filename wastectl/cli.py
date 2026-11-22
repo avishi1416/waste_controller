@@ -1,5 +1,6 @@
 """`python -m wastectl <command>` — the single entry point (CLAUDE.md section 7)."""
 import argparse
+import json
 import sys
 
 from wastectl import __version__
@@ -23,7 +24,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--config", default=str(DEFAULT_CONFIG))
     sub = p.add_subparsers(dest="command", required=True)
 
-    sub.add_parser("data", help="prepare datasets").add_argument("action", choices=["prepare"])
+    data = sub.add_parser("data", help="download / prepare datasets, SAM pseudo-masks")
+    data.add_argument("action", choices=["download", "prepare", "sam"])
+    data.add_argument("--sources", nargs="+", default=["warp", "taco", "trashnet"], choices=["warp", "taco", "trashnet"])
+    data.add_argument("--sam-model", default="sam2.1_b.pt")
+    data.add_argument("--device", default=None)
     sub.add_parser("fundamentals", help="run NumPy demos").add_argument(
         "demo", nargs="?", default="all", choices=["all", "tensors", "neurons", "mlp", "optimizers", "svd"]
     )
@@ -47,6 +52,21 @@ def main(argv=None) -> int:
         for name, res in run(args.demo, out, cfg["seed"]).items():
             print(f"[{name}] {res}")
         print(f"plots + results.json -> {out}/")
+        return 0
+    if args.command == "data":
+        if args.action == "download":
+            from wastectl.data.download import SOURCES
+
+            for s in args.sources:
+                SOURCES[s](cfg["paths"]["data_raw"])
+        elif args.action == "prepare":
+            from wastectl.data.prepare import prepare
+
+            print(json.dumps(prepare(cfg), indent=2))
+        else:
+            from wastectl.data.sam import sam_refine
+
+            sam_refine(cfg, args.sam_model, args.device)
         return 0
     print(f"wastectl {args.command}: not implemented yet (TODO.md {TODO_REF[args.command]})", file=sys.stderr)
     return 2

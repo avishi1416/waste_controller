@@ -17,6 +17,7 @@ paths:
   experiments: experiments
 
 models:
-  yolo: { variant: yolo_seg_n, imgsz: 640, amp: true }
+  yolo: { weights: yolo26n-seg.pt, imgsz: 640, epochs: 50, batch: 16, amp: true }
+  sam: { weights: sam2.1_b.pt }
   classifier: { backbones: [resnet18, googlenet], imgsz: 224 }
   gan: { imgsz: 64 }

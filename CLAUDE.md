@@ -31,7 +31,7 @@ an LSTM stream monitor and a GAN for rare categories, validated with **mAP, macr
 | Classifier | **ResNet-18 and GoogLeNet**, both fine-tuned on object crops and compared. |
 | LSTM stream monitor | **Both heads:** (a) forecast next-window purity, (b) classify window as normal / contamination event / empty-or-jam. |
 | Generative | **DCGAN only** (VAE dropped, Q26) on rare-class crops, with latent-space visualisation (interpolation + 2-D projection) and a test of whether synthetic crops improve rare-class F1. |
-| Compute | Owner has **free Colab (slow)** and **a second laptop with a GPU** (specs: Q21). The dev laptop (no GPU, Windows, possibly ARM under x64 emulation) runs the app/inference on CPU. **Training runs on the GPU laptop** (RTX 4050 6 GB, i5-12450H, CUDA installed), using AMP; Colab is overflow only (Q22). |
+| Compute | Owner has **free Colab (slow)** and **a second laptop with a GPU** (specs: Q21). The dev laptop runs CPU inference + the app (torch loads; see Round 4). **Training runs on the GPU laptop** (RTX 4050 6 GB, i5-12450H, CUDA installed), using AMP; Colab is overflow only (Q22). |
 | Git | Code on **GitHub** to sync the dev laptop ↔ GPU laptop (visibility: Q25). Never commit data or weights. |
 | ZeroWaste | **Not used today** (gated access, no time). Data = WaRP + TACO + TrashNet. LSTM uses simulated streams from WaRP (Q12c). |
 | Pipeline / seg / test set / tooling | Q1–Q4 accepted: two-stage YOLO-seg → crop classifier; semantic map from merged YOLO-seg masks (no U-Net); conveyor-only test set; Python 3.11 + argparse + `wastectl`. §3 items 1–7 are now decisions. |
@@ -208,3 +208,8 @@ Checked: WaRP README (AIRI-Institute/WaRP, GitHub licence field: none) and TACO 
   - TrashNet: cardboard → cardboard, plastic → rigid_plastic, metal → metal, glass/paper/trash → other.
   - Ambiguous: WaRP drink "cardboard" (really cartons), TACO "Other plastic" (→ other), foam (→ other), and Cigarette/Unlabeled litter (1184 tiny items that will dominate `other`). — **OPEN**
 - **Q31.** Running training: Claude can only run commands on the dev laptop. — Proposed: install Claude Code on the GPU laptop, clone the repo there, and continue in a session that reads this CLAUDE.md/TODO.md. Otherwise the owner runs the commands Claude prepares. — **OPEN**
+
+### Round 4 — environment finding (22 Nov 2026, corrected)
+- The first `import torch` on the dev laptop was blocked once by Windows Application Control (WinError 4551 on `shm.dll`). A retry minutes later **loaded fine** (torch 2.15.0+cpu, ultralytics OK). This was most likely a one-time reputation check. If it recurs, re-run; do not turn off Smart App Control (it can't be turned back on without reinstalling Windows).
+- So the dev laptop can run CPU inference and the Streamlit app. **Training stays on the GPU laptop.**
+- Writing many small files is slow here (likely Defender real-time scanning). Run `data prepare` on the GPU laptop where possible.

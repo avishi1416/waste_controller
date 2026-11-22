@@ -33,7 +33,15 @@ def build_parser() -> argparse.ArgumentParser:
         "demo", nargs="?", default="all", choices=["all", "tensors", "neurons", "mlp", "optimizers", "svd"]
     )
     for name in ("train", "eval"):
-        sub.add_parser(name).add_argument("model", choices=["yolo", "frcnn", "cls", "lstm", "gan", "pipeline"])
+        sp = sub.add_parser(name)
+        sp.add_argument("model", choices=["yolo", "frcnn", "cls", "lstm", "gan", "pipeline"])
+        sp.add_argument("--backbone", choices=["resnet18", "googlenet", "both"], default="both", help="cls only")
+        sp.add_argument("--epochs", type=int)
+        sp.add_argument("--batch", type=int)
+        sp.add_argument("--device", default=None, help="e.g. 0 / cuda / cpu")
+        sp.add_argument("--fraction", type=float, default=1.0, help="yolo: train on a fraction of the data (smoke runs)")
+        sp.add_argument("--workers", type=int, default=4)
+        sp.add_argument("--split", default="test", help="eval split")
     sub.add_parser("bench", help="FPS / memory benchmark")
     infer = sub.add_parser("infer", help="run the pipeline on an image or video")
     infer.add_argument("source")
@@ -67,6 +75,24 @@ def main(argv=None) -> int:
             from wastectl.data.sam import sam_refine
 
             sam_refine(cfg, args.sam_model, args.device)
+        return 0
+    if args.command in ("train", "eval") and args.model in ("yolo", "cls"):
+        backbones = ["resnet18", "googlenet"] if args.backbone == "both" else [args.backbone]
+        if args.model == "yolo":
+            from wastectl.vision import yolo
+
+            if args.command == "train":
+                yolo.train(cfg, args.epochs, args.batch, args.device, args.fraction)
+            else:
+                print(json.dumps(yolo.evaluate(cfg, split=args.split, device=args.device), indent=2))
+        else:
+            from wastectl.vision import classifier
+
+            for b in backbones:
+                if args.command == "train":
+                    classifier.train(cfg, b, args.epochs or 10, args.batch or 64, workers=args.workers, device=args.device)
+                else:
+                    print(json.dumps(classifier.evaluate(cfg, b, args.split, args.device), indent=2))
         return 0
     print(f"wastectl {args.command}: not implemented yet (TODO.md {TODO_REF[args.command]})", file=sys.stderr)
     return 2

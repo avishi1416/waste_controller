@@ -1,7 +1,7 @@
 # data and model artefacts are never committed (licences: education/research use only)
-data/
-weights/
-runs/
+/data/
+/weights/
+/runs/
 *.pt
 *.pth
 *.onnx
@@ -18,3 +18,6 @@ venv/
 graphify-out/
 .ultralytics/
 .streamlit/secrets.toml
+
+# derived images of dataset photos stay local (education/research-use datasets)
+experiments/data/*.jpg

@@ -44,6 +44,7 @@ def test_trashnet_and_unknown(cmap):
     assert cmap.name("trashnet", "paper") == "other"
     with pytest.raises(KeyError):
         cmap.name("taco", "Mystery object")
+    assert cmap.id("taco", "Cigarette") is None and cmap.id("taco", "Unlabeled litter") is None
 
 
 def test_box_polygon_roundtrip():
@@ -89,8 +90,9 @@ def _fake_raw(raw, rng):
         ims.append({"id": i, "width": 120, "height": 80, "file_name": f"batch_1/{i:06d}.jpg"})
         anns.append({"id": i, "image_id": i, "category_id": 0, "bbox": [10, 10, 60, 50],
                      "segmentation": [[10, 10, 70, 10, 70, 60, 10, 60]]})
-    (t / "annotations.json").write_text(json.dumps({"images": ims, "annotations": anns,
-                                                    "categories": [{"id": 0, "name": "Plastic film"}]}))
+    anns.append({"id": 99, "image_id": 0, "category_id": 1, "bbox": [0, 0, 20, 20], "segmentation": [[0, 0, 20, 0, 20, 20]]})
+    (t / "annotations.json").write_text(json.dumps({"images": ims, "annotations": anns, "categories": [
+        {"id": 0, "name": "Plastic film"}, {"id": 1, "name": "Cigarette"}]}))
     for i in range(10):
         _img(raw / "trashnet" / "dataset-resized" / "metal" / f"metal{i}.jpg", rng, (50, 50))
     junk = raw / "trashnet" / "__MACOSX" / "dataset-resized" / "glass" / "._x.jpg"
@@ -118,4 +120,5 @@ def test_prepare_end_to_end(tmp_path):
     assert not (crops / "test" / "metal").exists()  # TrashNet never in test
     assert not any(crops.glob("*/other/*"))  # __MACOSX junk ignored
     assert any((crops / "train" / "soft_plastic").iterdir())  # TACO object crops
+    assert all(len(f.read_text().splitlines()) == 1 for f in (yolo / "labels").glob("*/taco_*.txt"))  # cigarette dropped
     assert m["images"]["test"] == 3 and (tmp_path / "exp" / "data" / "class_counts.csv").exists()

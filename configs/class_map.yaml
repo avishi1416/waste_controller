@@ -2,6 +2,7 @@
 # Owner decisions: CLAUDE.md section 2. Items marked "Q30" are proposals awaiting owner approval.
 # `warp` uses glob patterns (first match wins); `taco` and `trashnet` use exact names.
 # Every source label MUST map; unknown labels make `data prepare` fail loudly.
+# `drop` = annotation is discarded (object left unlabelled).
 
 warp:
   - ["bottle-*", rigid_plastic]
@@ -80,8 +81,8 @@ taco:
   Food waste: other
   Rope & strings: other
   Shoe: other
-  Cigarette: other                        # Q30: 667 tiny items, will dominate `other`
-  Unlabeled litter: other                 # Q30: 517 items
+  Cigarette: drop                         # Q30 owner decision: dropped (667 tiny items)
+  Unlabeled litter: drop                  # Q30 owner decision: dropped (517 items)
 
 trashnet:
   cardboard: cardboard

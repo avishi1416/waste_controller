@@ -213,3 +213,5 @@ Checked: WaRP README (AIRI-Institute/WaRP, GitHub licence field: none) and TACO 
 - The first `import torch` on the dev laptop was blocked once by Windows Application Control (WinError 4551 on `shm.dll`). A retry minutes later **loaded fine** (torch 2.15.0+cpu, ultralytics OK). This was most likely a one-time reputation check. If it recurs, re-run; do not turn off Smart App Control (it can't be turned back on without reinstalling Windows).
 - So the dev laptop can run CPU inference and the Streamlit app. **Training stays on the GPU laptop.**
 - Writing many small files is slow here (likely Defender real-time scanning). Run `data prepare` on the GPU laptop where possible.
+
+- **Q30 (partial answer, 22 Nov 2026):** TACO **Cigarette and Unlabeled litter annotations are dropped** (value `drop` in class_map.yaml; objects stay unlabelled in their images). Still open: WaRP `juice-cardboard`/`milk-cardboard` (drink cartons) → cardboard, as currently mapped? — **PARTLY ANSWERED**

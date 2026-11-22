@@ -1,0 +1,17 @@
+{
+  "sources": {
+    "warp": false,
+    "taco": true,
+    "trashnet": true
+  },
+  "images": {
+    "val": 150,
+    "train": 1347
+  },
+  "dedupe_removed": {
+    "train": 3
+  },
+  "skipped": {},
+  "warp_masks": null,
+  "seed": 42
+}

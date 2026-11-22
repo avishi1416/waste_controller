@@ -18,13 +18,13 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 - [ ] Public GitHub repo ✅ pushed (github.com/avishi1416/waste_controller) — still to do: clone on the GPU laptop. Check RAM/disk, `torch.cuda.is_available()`, and print the GPU name
 
 ### 1. Data (⏱ 75 min, mostly downloads) 🎮
-- [ ] Download WaRP (D, C, S), TACO, TrashNet into `data/raw/`. Record URL, version, licence (or "unstated"), citation and download date for each. **ZeroWaste: not used today (gap)**
+- [ ] Download WaRP (D, C, S), TACO, TrashNet into `data/raw/`. _(TACO 1500/1500 + TrashNet done on dev laptop; **WaRP pending: Kaggle on GPU laptop**)_ Record URL, version, licence (or "unstated"), citation and download date for each. **ZeroWaste: not used today (gap)**
 - [ ] `configs/class_map.yaml`: every source label → {cardboard, soft_plastic, rigid_plastic, metal, other}. TrashNet plastic→rigid_plastic, paper→other, glass→other. Test: no unmapped labels. List any remaining ambiguous labels in the dataset card
-- [ ] Converters → unified YOLO-seg format + COCO JSON (COCO for Faster R-CNN, P1)
-- [ ] Perceptual-hash dedupe across sources. Log the count removed
+- [x] Converters → unified YOLO-seg format _(COCO export for Faster R-CNN: P1 step 11)_; labels visually verified (`experiments/data/label_check.jpg`)
+- [x] Perceptual-hash dedupe across sources. Log the count removed
 - [ ] Splits: official where they exist, by sequence for WaRP. **Test = WaRP test only.** Seed 42. Write the split manifest
-- [ ] Crop extractor → classifier dataset (boxes + WaRP-C + TrashNet)
-- [ ] Class-count table per split per source. Identify the 1–2 rarest classes (GAN target)
+- [x] Crop extractor → classifier dataset (boxes + WaRP-C + TrashNet)
+- [x] Class-count table per split per source (`experiments/data/class_counts.csv`; rerun with WaRP). Identify the 1–2 rarest classes (GAN target)
 
 ### 2. Start GPU training EARLY (kick off, then do §3 on the dev laptop while it runs) 🎮
 - [ ] YOLO-seg **nano**, 640, AMP → `weights/yolo_seg_n.pt`. Log to experiments.jsonl

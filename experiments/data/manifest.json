@@ -5,8 +5,9 @@
     "trashnet": true
   },
   "images": {
+    "test": 150,
     "val": 150,
-    "train": 1347
+    "train": 1197
   },
   "dedupe_removed": {
     "train": 3

@@ -43,6 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--fraction", type=float, default=1.0, help="yolo: train on a fraction of the data (smoke runs)")
         sp.add_argument("--workers", type=int, default=4)
         sp.add_argument("--split", default="test", help="eval split")
+        sp.add_argument("--resume", action="store_true", help="yolo: continue an interrupted training run")
     bench = sub.add_parser("bench", help="FPS / memory benchmark")
     bench.add_argument("--images", default=None, help="folder of images (default: test split, else val)")
     bench.add_argument("-n", type=int, default=50)
@@ -97,7 +98,7 @@ def _run(args) -> int:
             from wastectl.vision import yolo
 
             if args.command == "train":
-                yolo.train(cfg, args.epochs, args.batch, args.device, args.fraction)
+                yolo.train(cfg, args.epochs, args.batch, args.device, args.fraction, resume=args.resume)
             else:
                 print(json.dumps(yolo.evaluate(cfg, split=args.split, device=args.device), indent=2))
         else:

@@ -16,8 +16,8 @@ Anything unticked at submission goes into the report's **Gaps** section.
 - [x] Inference pipeline + `infer` / `bench` CLI (logic tested with a fake detector)
 
 ## 1. Data for the laptop plan (⏱ 10 min)
-- [ ] Rebuild TACO as 80/10/10 train/val/test (`data prepare --no-crops`)
-- [ ] Test for the no-WaRP split; update class counts
+- [x] Rebuild TACO as 80/10/10 train/val/test (`data prepare --no-crops`)
+- [x] Test for the no-WaRP split; update class counts _(1197 / 150 / 150 images, 3 near-duplicates removed)_
 
 ## 2. Training on the OmniBook (⏱ ~1.5–3 h, runs in background)
 - [ ] Pretrained `weights/yolo26n-seg.pt` downloaded
@@ -32,10 +32,10 @@ Anything unticked at submission goes into the report's **Gaps** section.
 - [ ] Failure gallery: what it misses (small/cluttered items) and why
 
 ## 4. Streamlit app (⏱ 45 min, built while training runs)
-- [ ] Upload a photo → masks + boxes + waste type + confidence, counts per class
-- [ ] Optional purity readout ("is this a clean plastic stream?")
-- [ ] Evaluation page (metrics + plots) and Fundamentals page (existing plots)
-- [ ] Professional look; honest "model not trained yet" state; education/research-use footer
+- [x] Upload a photo → masks + boxes + waste type + confidence, counts per class
+- [x] Optional purity readout ("is this a clean plastic stream?")
+- [x] Evaluation page (metrics + plots) and Fundamentals page (existing plots)
+- [x] Professional look; honest "model not trained yet" state; education/research-use footer
 
 ## 5. Docs (⏱ 30 min)
 - [ ] README: install, commands, results table, limitations, licence/use notice

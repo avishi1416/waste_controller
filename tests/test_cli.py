@@ -24,11 +24,17 @@ def test_unbuilt_command_fails_loudly():
 
 
 def test_missing_weights_is_a_clean_error(tmp_path, capsys):
-    from wastectl.vision.pipeline import Pipeline  # noqa: F401  (needs ultralytics importable)
+    import yaml
 
+    from wastectl.config import DEFAULT_CONFIG
+
+    cfg = yaml.safe_load(DEFAULT_CONFIG.read_text(encoding="utf-8"))
+    cfg["paths"]["weights"] = str(tmp_path / "no_weights_here")  # independent of what's trained on disk
+    cfg_path = tmp_path / "cfg.yaml"
+    cfg_path.write_text(yaml.safe_dump(cfg))
     img = tmp_path / "x.jpg"
     img.write_bytes(b"")
-    assert main(["infer", str(img)]) == 1
+    assert main(["--config", str(cfg_path), "infer", str(img)]) == 1
     assert "not trained yet" in capsys.readouterr().err
 
 

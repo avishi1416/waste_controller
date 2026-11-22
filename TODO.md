@@ -31,13 +31,13 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 - [ ] ResNet-18 + GoogLeNet on 224 crops → weights + macro F1 (queue after YOLO, or run alongside if VRAM allows)
 
 ### 3. NumPy fundamentals (⏱ 90 min) 💻 — `wastectl/fundamentals/`
-- [ ] Tensor sandbox: creation, broadcasting, inner products, reshape, with a plot of each
-- [ ] McCulloch-Pitts neuron (AND/OR/NOT) + sigmoid neuron; step vs sigmoid vs tanh plot
-- [ ] MLP: forward, cross-entropy, backprop; table of parameters vs hyperparameters
-- [ ] Optimizers: batch GD, SGD, Momentum, Nesterov; loss curves on the same task
-- [ ] Numerical gradient check (test: relative error < 1e-6)
-- [ ] SVD: compress crop embeddings + explained-variance plot
-- [ ] Tests: gradcheck, optimizers reduce loss, shapes
+- [x] Tensor sandbox: creation, broadcasting, inner products, reshape, with a plot of each
+- [x] McCulloch-Pitts neuron (AND/OR/NOT) + sigmoid neuron; step vs sigmoid vs tanh plot
+- [x] MLP: forward, cross-entropy, backprop; table of parameters vs hyperparameters
+- [x] Optimizers: batch GD, SGD, Momentum, Nesterov; loss curves on the same task
+- [x] Numerical gradient check (test: relative error < 1e-6)
+- [x] SVD: compress crop embeddings + explained-variance plot _(runs on synthetic 64-d features; swap in real crop embeddings after step 1)_
+- [x] Tests: gradcheck, optimizers reduce loss, shapes
 
 ### 4. Main pipeline + purity (⏱ 60 min) 💻
 - [ ] `wastectl/purity.py`: count-based purity, contamination flag, 30-frame window, conf thresholds. Unit-tested on toy detections

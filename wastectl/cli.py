@@ -24,7 +24,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="command", required=True)
 
     sub.add_parser("data", help="prepare datasets").add_argument("action", choices=["prepare"])
-    sub.add_parser("fundamentals", help="run NumPy demos").add_argument("demo", nargs="?", default="all")
+    sub.add_parser("fundamentals", help="run NumPy demos").add_argument(
+        "demo", nargs="?", default="all", choices=["all", "tensors", "neurons", "mlp", "optimizers", "svd"]
+    )
     for name in ("train", "eval"):
         sub.add_parser(name).add_argument("model", choices=["yolo", "frcnn", "cls", "lstm", "gan", "pipeline"])
     sub.add_parser("bench", help="FPS / memory benchmark")
@@ -37,6 +39,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
-    load_config(args.config)  # fail fast on a broken config
+    cfg = load_config(args.config)  # fail fast on a broken config
+    if args.command == "fundamentals":
+        from wastectl.fundamentals.demos import run
+
+        out = f"{cfg['paths']['experiments']}/fundamentals"
+        for name, res in run(args.demo, out, cfg["seed"]).items():
+            print(f"[{name}] {res}")
+        print(f"plots + results.json -> {out}/")
+        return 0
     print(f"wastectl {args.command}: not implemented yet (TODO.md {TODO_REF[args.command]})", file=sys.stderr)
     return 2

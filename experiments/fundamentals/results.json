@@ -1,0 +1,95 @@
+{
+  "neurons": {
+    "mcculloch_pitts_truth_tables": {
+      "AND": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "OR": [
+        0,
+        1,
+        1,
+        1
+      ],
+      "NOT": [
+        1,
+        0
+      ]
+    }
+  },
+  "tensors": {
+    "creation_shape": [
+      3,
+      4
+    ],
+    "broadcast_row": [
+      3,
+      4
+    ],
+    "broadcast_col": [
+      3,
+      4
+    ],
+    "inner_product": 0.5582236046749692,
+    "matmul_shape": [
+      3,
+      3
+    ],
+    "reshape": [
+      2,
+      6
+    ],
+    "transpose_view": [
+      4,
+      3
+    ]
+  },
+  "mlp": {
+    "gradcheck_max_rel_error": 5.618102816052717e-08,
+    "train_accuracy": 0.99,
+    "final_loss": 0.0200288162052539,
+    "parameters": {
+      "count": 1251,
+      "learned": [
+        "W1..W3 weights",
+        "b1..b3 biases"
+      ]
+    },
+    "hyperparameters": {
+      "layer_sizes": [
+        2,
+        32,
+        32,
+        3
+      ],
+      "activation": "tanh",
+      "init": "xavier",
+      "l2": 0.0,
+      "optimizer": "Momentum",
+      "lr": 0.1,
+      "beta": 0.9,
+      "batch_size": 32,
+      "epochs": 300
+    }
+  },
+  "optimizers": {
+    "final_loss": {
+      "Batch GD": 0.7174424215750956,
+      "SGD (bs 32)": 0.695007912126761,
+      "Momentum": 0.053565531290524514,
+      "Nesterov": 0.062023165883377744
+    }
+  },
+  "svd": {
+    "explained_variance_top5": 0.9995664854111973,
+    "relative_reconstruction_error": {
+      "1": 0.8471146918504613,
+      "2": 0.6857109990443192,
+      "5": 0.02079029707544638,
+      "10": 0.019061130746251785,
+      "20": 0.01591336168564386
+    }
+  }
+}

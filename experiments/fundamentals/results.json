@@ -91,5 +91,57 @@
       "10": 0.019061130746251785,
       "20": 0.01591336168564386
     }
+  },
+  "learning_rules": {
+    "hebbian_weight_norm_growth": 275688004968003.47,
+    "oja_weight_norm": 1.000060658981811,
+    "oja_vs_svd_pc1_cosine": 0.999970233140262,
+    "perceptron_errors_first_last": [
+      14,
+      0
+    ],
+    "hopfield_recall_exact": true,
+    "hopfield_energy_start_end": [
+      -23.900000000000006,
+      -50.20000000000001
+    ],
+    "comparison": "Hebbian/Oja/competitive are unsupervised: weights follow input correlations or proximity, with no target. Plain Hebb grows without bound; Oja's decay term makes it converge to the first principal component. Error-correction (perceptron, backprop) is supervised: weights move only in proportion to the prediction error. Hopfield stores patterns with a Hebbian rule and recalls them by descending an energy function (Boltzmann-style, deterministic)."
+  },
+  "ablations": {
+    "baseline (xavier, no reg)": {
+      "train_loss": 0.07822228797073061,
+      "val_loss": 0.4154483474534633,
+      "val_acc": 0.8933333333333333
+    },
+    "init: zero": {
+      "train_loss": 1.09863191527528,
+      "val_loss": 1.09863191527528,
+      "val_acc": 0.3333333333333333
+    },
+    "init: he": {
+      "train_loss": 0.07947456356907426,
+      "val_loss": 0.24360307101661371,
+      "val_acc": 0.93
+    },
+    "unnormalised input (x*10+5)": {
+      "train_loss": 0.4057782992555608,
+      "val_loss": 0.8932432940912344,
+      "val_acc": 0.69
+    },
+    "L2 1e-3": {
+      "train_loss": 0.19257477740551016,
+      "val_loss": 0.40694202240788424,
+      "val_acc": 0.895
+    },
+    "L2 1e-2": {
+      "train_loss": 0.6815989889219074,
+      "val_loss": 0.8830093469226016,
+      "val_acc": 0.72
+    },
+    "augment x4 jitter": {
+      "train_loss": 0.1761332729138972,
+      "val_loss": 0.4341987174069403,
+      "val_acc": 0.925
+    }
   }
 }

@@ -70,3 +70,48 @@ def test_demo_runner_writes_and_merges(tmp_path):
     res = json.loads((tmp_path / "results.json").read_text())
     assert res["neurons"]["mcculloch_pitts_truth_tables"]["NOT"] == [1, 0]
     assert "tensors" in res and (tmp_path / "activations.png").exists()
+
+
+def test_hebbian_explodes_oja_finds_pc1():
+    from wastectl.fundamentals.learning_rules import hebbian, oja
+
+    rng = np.random.default_rng(0)
+    X = rng.normal(size=(300, 2)) @ np.array([[3.0, 0.0], [0.0, 0.5]])
+    X -= X.mean(axis=0)
+    _, hn = hebbian(X, lr=0.001, epochs=5)
+    w, on = oja(X, lr=0.001, epochs=20)
+    assert hn[-1] > 100 * hn[0]  # unbounded growth
+    pc1 = np.linalg.svd(X, full_matrices=False)[2][0]
+    assert abs(np.linalg.norm(w) - 1) < 0.05 and abs(w @ pc1) > 0.99
+
+
+def test_competitive_finds_clusters():
+    from wastectl.fundamentals.learning_rules import competitive
+
+    rng = np.random.default_rng(0)
+    centres = np.array([[0, 0], [5, 5], [0, 5]])
+    X = np.vstack([c + 0.3 * rng.normal(size=(50, 2)) for c in centres])
+    W = competitive(X, k=3)
+    assert all(np.min(np.linalg.norm(W - c, axis=1)) < 0.5 for c in centres)
+
+
+def test_perceptron_converges_on_separable():
+    from wastectl.fundamentals.learning_rules import perceptron
+
+    rng = np.random.default_rng(0)
+    X = rng.normal(size=(100, 2))
+    y = (X[:, 0] + X[:, 1] > 0).astype(int)
+    _, _, errors = perceptron(X, y, epochs=50)
+    assert errors[-1] == 0
+
+
+def test_hopfield_recalls_and_energy_never_rises():
+    from wastectl.fundamentals.learning_rules import Hopfield
+
+    rng = np.random.default_rng(0)
+    P = rng.choice([-1.0, 1.0], size=(3, 64))
+    net = Hopfield(P)
+    noisy = P[0].copy()
+    noisy[rng.choice(64, 8, replace=False)] *= -1
+    s, E = net.recall(noisy)
+    assert np.array_equal(s, P[0]) and all(b <= a + 1e-9 for a, b in zip(E, E[1:]))

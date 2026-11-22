@@ -30,7 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
     data.add_argument("--sam-model", default="sam2.1_b.pt")
     data.add_argument("--device", default=None)
     sub.add_parser("fundamentals", help="run NumPy demos").add_argument(
-        "demo", nargs="?", default="all", choices=["all", "tensors", "neurons", "mlp", "optimizers", "svd"]
+        "demo", nargs="?", default="all", choices=["all", "tensors", "neurons", "mlp", "optimizers", "svd", "learning_rules", "ablations"]
     )
     for name in ("train", "eval"):
         sp = sub.add_parser(name)

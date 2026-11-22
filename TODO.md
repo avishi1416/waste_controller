@@ -9,6 +9,8 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 
 ---
 
+> **Owner direction (22 Nov 2026): training is paused — do everything else first.** Model-training items stay open until the owner resumes them.
+
 ## P0 — Must pass the acceptance criteria (≈5–6 h)
 
 ### 0. Setup (⏱ 20 min) 💻
@@ -85,10 +87,10 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 - [ ] Experiment: classifier with vs without synthetic crops → rare-class F1 delta (report honestly even if it doesn't help)
 
 ### 10. Learning rules + ablations 💻
-- [ ] Hebbian, modified Hebbian (Oja), competitive (winner-take-all) demos with plots
-- [ ] Error-correction (perceptron/delta) + a written comparison against Hebbian
-- [ ] Boltzmann/energy-based demo (small RBM or Hopfield) with an energy plot
-- [ ] NumPy MLP ablations: init (zero/Xavier/He), normalization, L2/dropout, augmentation → overfitting vs generalization curves
+- [x] Hebbian, modified Hebbian (Oja), competitive (winner-take-all) demos with plots
+- [x] Error-correction (perceptron/delta) + a written comparison against Hebbian
+- [x] Boltzmann/energy-based demo (small RBM or Hopfield) with an energy plot
+- [x] NumPy MLP ablations: init (zero/Xavier/He), normalization, L2/dropout, augmentation → overfitting vs generalization curves
 
 ### 11. Faster R-CNN benchmark (first to cut) 🎮
 - [ ] torchvision Faster R-CNN ResNet-50-FPN on the COCO export, small batch (2–4) + AMP → mAP on WaRP test

@@ -117,7 +117,99 @@ def svd(out, seed):
     return {"explained_variance_top5": float(ratio[:5].sum()), "relative_reconstruction_error": errs}
 
 
-DEMOS = {"tensors": tensors, "neurons": neurons, "mlp": mlp, "optimizers": optimizers, "svd": svd}
+def learning_rules(out, seed):
+    from wastectl.fundamentals.learning_rules import Hopfield, competitive, hebbian, oja, perceptron
+
+    rng = np.random.default_rng(seed)
+    X = rng.normal(size=(300, 2)) @ np.array([[3.0, 1.0], [1.0, 1.0]])
+    X -= X.mean(axis=0)
+    _, hn = hebbian(X, lr=0.001, epochs=10, seed=seed)
+    w_oja, on = oja(X, lr=0.001, epochs=20, seed=seed)
+    pc1 = np.linalg.svd(X, full_matrices=False)[2][0]
+    blobs = np.vstack([c + 0.4 * rng.normal(size=(60, 2)) for c in ([0, 0], [4, 4], [0, 4])])
+    protos = competitive(blobs, k=3, seed=seed)
+    Xs = rng.normal(size=(200, 2))
+    ys = (Xs @ [1.0, -0.5] > 0).astype(int)
+    _, _, errs = perceptron(Xs, ys, epochs=30)
+    P = rng.choice([-1.0, 1.0], size=(3, 100))
+    noisy = P[0].copy()
+    noisy[rng.choice(100, 15, replace=False)] *= -1
+    rec, energy = Hopfield(P).recall(noisy, seed=seed)
+
+    fig, ax = plt.subplots(1, 4, figsize=(16, 3.6))
+    ax[0].semilogy(hn, label="Hebb |w|")
+    ax[0].semilogy(on, label="Oja |w|")
+    ax[0].set_title("Hebb diverges, Oja normalises")
+    ax[0].legend()
+    ax[1].scatter(blobs[:, 0], blobs[:, 1], s=6, c="grey")
+    ax[1].scatter(protos[:, 0], protos[:, 1], s=120, c="red", marker="*")
+    ax[1].set_title("Competitive (winner-take-all) prototypes")
+    ax[2].plot(errs, marker=".")
+    ax[2].set_title("Perceptron (error-correction): mistakes/epoch")
+    ax[3].plot(energy)
+    ax[3].set_title("Hopfield energy during recall")
+    _save(fig, out, "learning_rules")
+    return {
+        "hebbian_weight_norm_growth": hn[-1] / hn[0],
+        "oja_weight_norm": on[-1],
+        "oja_vs_svd_pc1_cosine": float(abs(w_oja @ pc1) / np.linalg.norm(w_oja)),
+        "perceptron_errors_first_last": [errs[0], errs[-1]],
+        "hopfield_recall_exact": bool(np.array_equal(rec, P[0])),
+        "hopfield_energy_start_end": [energy[0], energy[-1]],
+        "comparison": (
+            "Hebbian/Oja/competitive are unsupervised: weights follow input correlations or proximity, with no target. "
+            "Plain Hebb grows without bound; Oja's decay term makes it converge to the first principal component. "
+            "Error-correction (perceptron, backprop) is supervised: weights move only in proportion to the prediction error. "
+            "Hopfield stores patterns with a Hebbian rule and recalls them by descending an energy function (Boltzmann-style, deterministic)."
+        ),
+    }
+
+
+def ablations(out, seed):
+    """Init, input normalisation, L2 and augmentation on a deliberately small training set (to expose overfitting)."""
+    Xtr, ytr = spirals(n_per_class=15, noise=0.4, seed=seed)
+    Xva, yva = spirals(n_per_class=200, noise=0.4, seed=seed + 1)
+
+    def run(init="xavier", l2=0.0, scale=1.0, shift=0.0, augment=0, epochs=600):
+        rng = np.random.default_rng(seed)
+        X, y = Xtr * scale + shift, ytr
+        if augment:  # Gaussian jitter copies of each training point
+            X = np.vstack([X] + [X + rng.normal(0, 0.05 * scale, X.shape) for _ in range(augment)])
+            y = np.concatenate([y] * (augment + 1))
+        m = MLP([2, 64, 64, 3], act="tanh", init=init, l2=l2, seed=seed)
+        h = train(m, Momentum(0.05), X, y, epochs=epochs, batch_size=16, seed=seed, X_val=Xva * scale + shift, y_val=yva)
+        acc = float((m.predict(Xva * scale + shift) == yva).mean())
+        return h, {"train_loss": float(h["train"][-1]), "val_loss": float(h["val"][-1]), "val_acc": acc}
+
+    variants = {
+        "baseline (xavier, no reg)": {},
+        "init: zero": {"init": "zero"},
+        "init: he": {"init": "he"},
+        "unnormalised input (x*10+5)": {"scale": 10.0, "shift": 5.0},
+        "L2 1e-3": {"l2": 1e-3},
+        "L2 1e-2": {"l2": 1e-2},
+        "augment x4 jitter": {"augment": 4},
+    }
+    results, hists = {}, {}
+    for name, kw in variants.items():
+        hists[name], results[name] = run(**kw)
+    fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+    for name in ("baseline (xavier, no reg)", "L2 1e-2", "augment x4 jitter"):
+        ax[0].plot(hists[name]["train"], "--", label=f"{name} train")
+        ax[0].plot(hists[name]["val"], label=f"{name} val")
+    ax[0].set_title("Overfitting vs regularisation (small train set)")
+    ax[0].set_xlabel("epoch")
+    ax[0].legend(fontsize=7)
+    names = list(results)
+    ax[1].barh(names, [results[n]["val_acc"] for n in names])
+    ax[1].set_xlabel("validation accuracy")
+    ax[1].set_title("Ablations")
+    _save(fig, out, "ablations")
+    return results
+
+
+DEMOS = {"tensors": tensors, "neurons": neurons, "mlp": mlp, "optimizers": optimizers, "svd": svd,
+         "learning_rules": learning_rules, "ablations": ablations}
 
 
 def run(name="all", out_dir="experiments/fundamentals", seed=42):

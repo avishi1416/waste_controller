@@ -27,12 +27,12 @@ def train(cfg, epochs=None, batch=None, device=None, fraction=1.0, weights=None)
     y = cfg["models"]["yolo"]
     weights = weights or y["weights"]
     params = {"weights": weights, "imgsz": y["imgsz"], "epochs": epochs or y["epochs"], "batch": batch or y["batch"],
-              "amp": y["amp"], "fraction": fraction}
+              "amp": y["amp"], "fraction": fraction, "freeze": y.get("freeze"), "workers": y.get("workers", 2)}
     started = time.time()
     model = YOLO(weights)
     model.train(data=_data_yaml(cfg), seed=cfg["seed"], deterministic=True, device=device,
                 project=str(Path(cfg["paths"]["experiments"]).resolve() / "runs"), name=Path(weights).stem, exist_ok=True,
-                **{k: params[k] for k in ("imgsz", "epochs", "batch", "amp", "fraction")})
+                **{k: params[k] for k in ("imgsz", "epochs", "batch", "amp", "fraction", "freeze", "workers")})
     best = Path(model.trainer.save_dir) / "weights" / "best.pt"
     out = Path(cfg["paths"]["weights"]) / f"{Path(weights).stem}_waste.pt"
     out.parent.mkdir(parents=True, exist_ok=True)

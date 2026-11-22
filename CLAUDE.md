@@ -4,6 +4,9 @@ Guide for any Claude/AI session working in this repo. Read this fully before tou
 The task list lives in [TODO.md](TODO.md). Source briefs: `~/Downloads/Deep Learning - PBL.docx`
 (Project 07 + common requirements + rubric) and `~/Downloads/PBL Guidelines.docx` (faculty process).
 
+> ## ⚠ ACTIVE PLAN = Round 5 "laptop plan" (22 Nov 2026), see the end of section 10.
+> It supersedes earlier decisions on datasets, models, compute and the advanced module wherever they conflict.
+
 ## 1. What this is
 
 Course CSAI3027P Deep Learning, PBL **Project 07 — Waste Sorting and Recycling Quality Controller**
@@ -215,3 +218,14 @@ Checked: WaRP README (AIRI-Institute/WaRP, GitHub licence field: none) and TACO 
 - Writing many small files is slow here (likely Defender real-time scanning). Run `data prepare` on the GPU laptop where possible.
 
 - **Q30 (partial answer, 22 Nov 2026):** TACO **Cigarette and Unlabeled litter annotations are dropped** (value `drop` in class_map.yaml; objects stay unlabelled in their images). Still open: WaRP `juice-cardboard`/`milk-cardboard` (drink cartons) → cardboard, as currently mapped? — **PARTLY ANSWERED**
+
+### Round 5 — scope pivot: laptop plan (owner decision, 22 Nov 2026) — ACTIVE
+Owner: "I just need a working prototype which can detect and segment the waste, according to my laptop and time limit."
+- **Hardware:** everything runs on the owner's **HP OmniBook 5 (Snapdragon X, 8 GB RAM, CPU only; x64 Python under emulation)**. The NPU can't be used for training. The GPU laptop and Colab are not used.
+- **Model:** **one model, YOLO26n-seg** (COCO-pretrained, fine-tuned). It gives detection + instance segmentation + waste class per object. Semantic map = merged masks.
+- **Data:** **TACO only** (real polygon masks, already downloaded), 5 classes (cardboard / soft_plastic / rigid_plastic / metal / other), Cigarette + Unlabeled litter dropped. **Split 80/10/10 train/val/test**, seed 42, dhash-deduped.
+- **CPU training settings:** imgsz 416, batch 8, ~20 epochs (set from a 1-epoch timing run), first 10 layers frozen, 2 workers.
+- **Dropped for today** (become report limitations / future work): WaRP, SAM pseudo-masks, Faster R-CNN, ResNet/GoogLeNet crop classifier, LSTM stream monitor, GAN, conveyor test set. The purity logic stays available in the app as a bonus readout.
+- **Kept:** NumPy fundamentals, learning rules, ablations, data pipeline, tests, Streamlit app, PDF report, .pptx slides (4-min talk).
+- **Expected quality (stated honestly):** TACO is hard (outdoor, small objects); roughly 0.2–0.4 mask mAP@0.5. Good on clear medium/large items.
+- **Brief coverage:** classification + detection + segmentation are covered. The sequence and generative components are missing, and the report says so. An optional tiny GAN only if time remains.

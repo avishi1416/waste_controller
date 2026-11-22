@@ -122,3 +122,18 @@ def test_prepare_end_to_end(tmp_path):
     assert any((crops / "train" / "soft_plastic").iterdir())  # TACO object crops
     assert all(len(f.read_text().splitlines()) == 1 for f in (yolo / "labels").glob("*/taco_*.txt"))  # cigarette dropped
     assert m["images"]["test"] == 3 and (tmp_path / "exp" / "data" / "class_counts.csv").exists()
+
+
+def test_prepare_taco_only_gets_test_split(tmp_path):
+    import shutil
+
+    rng = np.random.default_rng(2)
+    cfg = load_config()
+    cfg["paths"] = {**cfg["paths"], "data_raw": str(tmp_path / "raw"), "data_processed": str(tmp_path / "proc"),
+                    "experiments": str(tmp_path / "exp")}
+    _fake_raw(tmp_path / "raw", rng)
+    shutil.rmtree(tmp_path / "raw" / "warp")
+    m = prepare(cfg, crops=False)
+    assert m["images"] == {"test": 1, "val": 1, "train": 8}  # 10 TACO images -> 80/10/10
+    assert not (tmp_path / "proc" / "crops").exists()
+    assert "test: images/test" in (tmp_path / "proc" / "yolo" / "data.yaml").read_text()

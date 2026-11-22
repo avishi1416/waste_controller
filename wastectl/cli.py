@@ -29,6 +29,7 @@ def build_parser() -> argparse.ArgumentParser:
     data.add_argument("--sources", nargs="+", default=["warp", "taco", "trashnet"], choices=["warp", "taco", "trashnet"])
     data.add_argument("--sam-model", default="sam2.1_b.pt")
     data.add_argument("--device", default=None)
+    data.add_argument("--no-crops", action="store_true", help="skip classifier crops (YOLO-only laptop plan)")
     sub.add_parser("fundamentals", help="run NumPy demos").add_argument(
         "demo", nargs="?", default="all", choices=["all", "tensors", "neurons", "mlp", "optimizers", "svd", "learning_rules", "ablations"]
     )
@@ -84,7 +85,7 @@ def _run(args) -> int:
         elif args.action == "prepare":
             from wastectl.data.prepare import prepare
 
-            print(json.dumps(prepare(cfg), indent=2))
+            print(json.dumps(prepare(cfg, crops=not args.no_crops), indent=2))
         else:
             from wastectl.data.sam import sam_refine
 

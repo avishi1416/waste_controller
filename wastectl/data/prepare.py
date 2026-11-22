@@ -1,6 +1,7 @@
 """`python -m wastectl data prepare`: raw sources -> data/processed/{yolo,crops} + manifest + class counts.
 
-Split policy (CLAUDE.md section 3): test = WaRP test only; TACO/TrashNet are train/val only; seed from config.
+Split policy: with WaRP present, test = WaRP test only and TACO is train/val. Without WaRP (laptop plan,
+CLAUDE.md Round 5) TACO is split 80/10/10 train/val/test. Seed from config.
 """
 import csv
 import json
@@ -16,6 +17,7 @@ from wastectl.data.convert import classifier_folders, polygon_box, taco_records,
 from wastectl.data.dedupe import dhash, keep_mask
 
 VAL_FRACTION = 0.1
+TEST_FRACTION = 0.1  # TACO test share, used only when WaRP is absent
 SPLIT_ORDER = {"test": 0, "val": 1, "train": 2}  # dedupe keeps test images first, so train never copies test
 
 
@@ -35,8 +37,12 @@ def _assign_splits(records, rng):
         if r["source"] == "warp" and r["split_hint"] == "test":
             r["split"] = "test"
     taco = [r for r in records if r["source"] == "taco"]
-    for r, s in zip(taco, _split_train_val(taco, rng)):
-        r["split"] = s
+    has_warp = any(r["source"] == "warp" for r in records)
+    idx = rng.permutation(len(taco))
+    n_test = 0 if has_warp else int(len(taco) * TEST_FRACTION)
+    n_val = int(len(taco) * VAL_FRACTION)
+    for rank, i in enumerate(idx):
+        taco[i]["split"] = "test" if rank < n_test else "val" if rank < n_test + n_val else "train"
 
 
 def _out_name(r, raw):
@@ -68,7 +74,7 @@ def _crop(img_path, poly, dest, min_side=32, pad=0.05):
     return True
 
 
-def prepare(cfg):
+def prepare(cfg, crops=True):
     raw, out = Path(cfg["paths"]["data_raw"]), Path(cfg["paths"]["data_processed"])
     classes = cfg["classes"]
     cmap = ClassMap(classes)
@@ -108,7 +114,7 @@ def prepare(cfg):
         for c, p in r["instances"]:
             counts[("det", r["split"], r["source"], classes[c])] += 1
             # TACO object crops feed the classifier (train/val only); WaRP crops come from WaRP-C
-            if r["source"] == "taco":
+            if crops and r["source"] == "taco":
                 cdir = out / "crops" / r["split"] / classes[c]
                 cdir.mkdir(parents=True, exist_ok=True)
                 n = counts[("crop", r["split"], "taco", classes[c])]
@@ -124,11 +130,11 @@ def prepare(cfg):
             shutil.copy2(img, cdir / f"{source}_{img.parent.name}_{img.name}")
             counts[("crop", split, source, classes[c])] += 1
 
-    if have["warp"]:
+    if crops and have["warp"]:
         wc = next((raw / "warp").glob("**/Warp-C"))
         add_crops(classifier_folders(wc / "train_crops", "warp", cmap), lambda it: _split_train_val(it, rng), "warp")
         add_crops(classifier_folders(wc / "test_crops", "warp", cmap), lambda it: ["test"] * len(it), "warp")
-    if have["trashnet"]:
+    if crops and have["trashnet"]:
         add_crops(classifier_folders(raw / "trashnet", "trashnet", cmap), lambda it: _split_train_val(it, rng), "trashnet")
 
     # ultralytics dataset file; val falls back to train split names if a split is empty

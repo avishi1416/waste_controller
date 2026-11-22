@@ -17,7 +17,8 @@ paths:
   experiments: experiments
 
 models:
-  yolo: { weights: yolo26n-seg.pt, imgsz: 640, epochs: 50, batch: 16, amp: true }
+  # laptop plan (CLAUDE.md Round 5): CPU training on the OmniBook, sized for 8 GB RAM
+  yolo: { weights: weights/yolo26n-seg.pt, imgsz: 416, epochs: 20, batch: 8, freeze: 10, workers: 2, amp: false }
   sam: { weights: sam2.1_b.pt }
   classifier: { backbones: [resnet18, googlenet], imgsz: 224 }
   gan: { imgsz: 64 }

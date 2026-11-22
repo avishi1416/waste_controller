@@ -20,8 +20,8 @@ Anything unticked at submission goes into the report's **Gaps** section.
 - [x] Test for the no-WaRP split; update class counts _(1197 / 150 / 150 images, 3 near-duplicates removed)_
 
 ## 2. Training on the OmniBook (⏱ ~1.5–3 h, runs in background)
-- [ ] Pretrained `weights/yolo26n-seg.pt` downloaded
-- [ ] 1-epoch timing run → choose the epoch count that fits
+- [x] Pretrained `weights/yolo26n-seg.pt` downloaded
+- [x] 1-epoch timing run → choose the epoch count that fits _(≈4 min/epoch → 30 epochs ≈ 2 h; val mask mAP50 0.127 after 1 epoch)_
 - [ ] Full training run → `weights/yolo26n-seg_waste.pt`, logged to experiments.jsonl
 - [ ] Laptop stays plugged in, sleep disabled, heavy apps closed (8 GB RAM)
 
@@ -39,16 +39,16 @@ Anything unticked at submission goes into the report's **Gaps** section.
 
 ## 5. Docs (⏱ 30 min)
 - [ ] README: install, commands, results table, limitations, licence/use notice
-- [ ] Dataset card (TACO: source, licence, class mapping, splits, counts) + model card (YOLO26n-seg)
+- [x] Dataset card (TACO: source, licence, class mapping, splits, counts) + model card (YOLO26n-seg)
 
 ## 6. Demo (⏱ 20 min)
 - [ ] 6–10 curated test photos that show it working (plus 1–2 honest failures)
 - [ ] End-to-end rehearsal of the 4-minute demo
 
 ## 7. Report + slides (⏱ 1–1.5 h)
-- [ ] Technical report → **PDF**: cover, problem, data, fundamentals, model, results, limitations, gaps, references
-- [ ] **Slides (.pptx), 6–8 for a 4-min talk:** problem → data → model → live demo → results → limitations
-- [ ] Demo video script (owner records)
+- [ ] Technical report → **PDF** _(builder done: `python docs/build_report.py`; final numbers + error analysis after evaluation)_: cover, problem, data, fundamentals, model, results, limitations, gaps, references
+- [ ] **Slides (.pptx), 6–8 for a 4-min talk** _(8 slides built: `node docs/slides/build_slides.js`; refresh after evaluation)_: problem → data → model → live demo → results → limitations
+- [x] Demo video script (owner records) → `docs/demo_script.md`
 
 ## Optional (only if time remains)
 - [ ] Tiny GAN on 64×64 TACO crops (generative component, ~1 h CPU)

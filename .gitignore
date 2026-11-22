@@ -1,0 +1,20 @@
+# data and model artefacts are never committed (licences: education/research use only)
+data/
+weights/
+runs/
+*.pt
+*.pth
+*.onnx
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# tools
+graphify-out/
+.ultralytics/
+.streamlit/secrets.toml

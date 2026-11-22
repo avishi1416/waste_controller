@@ -182,6 +182,6 @@ When answered, write the answer inline, mark it **ANSWERED**, and move durable d
 - **Q23.** Code syncs between the laptops through **GitHub**. — **ANSWERED** (visibility: Q25)
 - **Q24.** Slides as **.pptx**, for a **4-minute talk** → ~6–8 slides, one idea each, demo-first. — **ANSWERED**
 - **Q25.** GitHub repo is **public**. Data and weights are never committed, and the README carries the education/research-use notice. — **ANSWERED**
-- **Q26.** "You can use LSTM and GAN". Read as: the advanced module is **LSTM + DCGAN**, and the **VAE is dropped**. The brief accepts VAE *or* GAN, so this is fine. **Claude's call:** demo polish goes in as P0.5, and P1 order is LSTM → GAN → Faster R-CNN. YOLO vs ResNet vs GoogLeNet already meets the brief's "at least two architectures", so Faster R-CNN is the first thing to cut if time runs out. — **ANSWERED (owner: correct this if misread)**
-- **Q27.** Code licence for the public repo? — Proposed: MIT for the code only. Datasets keep their own licences. — **OPEN**
+- **Q26.** "You can use LSTM and GAN". Read as: the advanced module is **LSTM + DCGAN**, and the **VAE is dropped**. The brief accepts VAE *or* GAN, so this is fine. **Claude's call:** demo polish goes in as P0.5, and P1 order is LSTM → GAN → Faster R-CNN. YOLO vs ResNet vs GoogLeNet already meets the brief's "at least two architectures", so Faster R-CNN is the first thing to cut if time runs out. — **ANSWERED (owner confirmed)**
+- **Q27.** **MIT** licence for the code only. Datasets keep their own licences. — **ANSWERED**
 - **Q21 (specs).** RTX 4050 Laptop, 6 GB VRAM, Intel i5-12450H. 6 GB fits YOLO-seg n/s at 640 (batch ~8–16), Faster R-CNN R50-FPN (batch ~2–4), classifiers, LSTM and GAN. Use AMP.

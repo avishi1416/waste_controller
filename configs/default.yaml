@@ -1,0 +1,22 @@
+# Central config. Values here are owner decisions (CLAUDE.md §2) unless marked otherwise.
+seed: 42
+
+classes: [cardboard, soft_plastic, rigid_plastic, metal, other]
+
+purity:
+  target_stream: rigid_plastic   # default stream in app/CLI
+  alert_below: 0.90              # contamination alert when purity < this
+  window_frames: 30              # sliding window for purity and LSTM
+  conf_draw: 0.25                # min confidence to draw a detection
+  conf_count: 0.40               # min confidence to count toward purity
+
+paths:
+  data_raw: data/raw
+  data_processed: data/processed
+  weights: weights
+  experiments: experiments
+
+models:
+  yolo: { variant: yolo_seg_n, imgsz: 640, amp: true }
+  classifier: { backbones: [resnet18, googlenet], imgsz: 224 }
+  gan: { imgsz: 64 }

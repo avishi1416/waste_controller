@@ -21,3 +21,9 @@ graphify-out/
 
 # derived images of dataset photos stay local (education/research-use datasets)
 experiments/data/*.jpg
+
+# report outputs contain dataset photos: keep local (submit directly, do not publish)
+docs/*.pdf
+docs/report.html
+experiments/report_assets/
+experiments/infer*/

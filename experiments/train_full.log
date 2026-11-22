@@ -1,2 +1,145 @@
 Ultralytics 8.4.216  Python-3.11.9 torch-2.15.0+cpu CPU (Snapdragon X - X126100 - Qualcomm Oryon CPU)
 [34m[1mengine\trainer: [0magnostic_nms=False, amp=False, angle=1.0, augment=False, auto_augment=randaugment, batch=8, bgr=0.0, box=7.5, cache=False, cfg=None, channels_last=None, classes=None, close_mosaic=10, cls=0.5, cls_pw=0.0, cls_remap=True, compile=False, conf=None, copy_paste=0.0, copy_paste_mode=flip, cos_lr=False, cutmix=0.0, data=data\processed\yolo\data.yaml, degrees=0.0, deterministic=True, device=cpu, dfl=1.5, dgrad=0.5, dis=6.0, distill_model=None, dlam=1.0, dlog=1.0, dnn=False, dropout=0.0, dynamic=False, embed=None, epochs=30, erasing=0.4, exist_ok=True, fliplr=0.5, flipud=0.0, format=torchscript, fraction=1.0, freeze=10, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, imgsz=416, iou=None, kobj=1.0, line_width=None, lr0=0.01, lrf=0.01, mask_ratio=4, max_det=300, mixup=0.0, mode=train, model=weights/yolo26n-seg.pt, momentum=0.937, mosaic=1.0, multi_scale=0.0, name=yolo26n-seg, nbs=64, nms=None, opset=None, optimize=False, optimizer=auto, overlap_mask=True, patience=100, perspective=0.0, plots=True, pose=12.0, pretrained=True, profile=False, project=C:\Users\mehrotraavishi\Desktop\waste_controller\experiments\runs, quantize=None, rect=False, resume=False, retina_masks=False, rle=1.0, save=True, save_conf=False, save_crop=False, save_dir=C:\Users\mehrotraavishi\Desktop\waste_controller\experiments\runs\yolo26n-seg, save_frames=False, save_json=False, save_period=-1, save_txt=False, scale=0.5, seed=42, shear=0.0, show=False, show_boxes=True, show_conf=True, show_labels=True, simplify=True, single_cls=False, source=None, split=val, stream_buffer=False, task=segment, tile=False, time=None, tracker=tracktrack.yaml, translate=0.1, val=True, verbose=True, vid_stride=1, visualize=False, warmup_bias_lr=0.1, warmup_epochs=3.0, warmup_momentum=0.8, weight_decay=0.0005, workers=2, workspace=None
+Overriding model.yaml nc=80 with nc=5
+
+                   from  n    params  module                                       arguments                     
+  0                  -1  1       464  ultralytics.nn.modules.conv.Conv             [3, 16, 3, 2]                 
+  1                  -1  1      4672  ultralytics.nn.modules.conv.Conv             [16, 32, 3, 2]                
+  2                  -1  1      6640  ultralytics.nn.modules.block.C3k2            [32, 64, 1, False, 0.25]      
+  3                  -1  1     36992  ultralytics.nn.modules.conv.Conv             [64, 64, 3, 2]                
+  4                  -1  1     26080  ultralytics.nn.modules.block.C3k2            [64, 128, 1, False, 0.25]     
+  5                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+  6                  -1  1     87040  ultralytics.nn.modules.block.C3k2            [128, 128, 1, True]           
+  7                  -1  1    295424  ultralytics.nn.modules.conv.Conv             [128, 256, 3, 2]              
+  8                  -1  1    346112  ultralytics.nn.modules.block.C3k2            [256, 256, 1, True]           
+  9                  -1  1    164608  ultralytics.nn.modules.block.SPPF            [256, 256, 5, 3, True]        
+ 10                  -1  1    249728  ultralytics.nn.modules.block.C2PSA           [256, 256, 1]                 
+ 11                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 12             [-1, 6]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 13                  -1  1    119808  ultralytics.nn.modules.block.C3k2            [384, 128, 1, True]           
+ 14                  -1  1         0  torch.nn.modules.upsampling.Upsample         [None, 2, 'nearest']          
+ 15             [-1, 4]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 16                  -1  1     34304  ultralytics.nn.modules.block.C3k2            [256, 64, 1, True]            
+ 17                  -1  1     36992  ultralytics.nn.modules.conv.Conv             [64, 64, 3, 2]                
+ 18            [-1, 13]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 19                  -1  1     95232  ultralytics.nn.modules.block.C3k2            [192, 128, 1, True]           
+ 20                  -1  1    147712  ultralytics.nn.modules.conv.Conv             [128, 128, 3, 2]              
+ 21            [-1, 10]  1         0  ultralytics.nn.modules.conv.Concat           [1]                           
+ 22                  -1  1    463104  ultralytics.nn.modules.block.C3k2            [384, 256, 1, True, 0.5, True]
+ 23        [16, 19, 22]  1    792251  ultralytics.nn.modules.head.Segment26        [5, 32, 64, 1, True, [64, 128, 256]]
+YOLO26n-seg summary: 309 layers, 3,054,875 parameters, 3,054,875 gradients, 10.3 GFLOPs
+
+Transferred 830/844 items from pretrained weights
+Freezing layer 'model.0.conv.weight'
+Freezing layer 'model.0.bn.weight'
+Freezing layer 'model.0.bn.bias'
+Freezing layer 'model.1.conv.weight'
+Freezing layer 'model.1.bn.weight'
+Freezing layer 'model.1.bn.bias'
+Freezing layer 'model.2.cv1.conv.weight'
+Freezing layer 'model.2.cv1.bn.weight'
+Freezing layer 'model.2.cv1.bn.bias'
+Freezing layer 'model.2.cv2.conv.weight'
+Freezing layer 'model.2.cv2.bn.weight'
+Freezing layer 'model.2.cv2.bn.bias'
+Freezing layer 'model.2.m.0.cv1.conv.weight'
+Freezing layer 'model.2.m.0.cv1.bn.weight'
+Freezing layer 'model.2.m.0.cv1.bn.bias'
+Freezing layer 'model.2.m.0.cv2.conv.weight'
+Freezing layer 'model.2.m.0.cv2.bn.weight'
+Freezing layer 'model.2.m.0.cv2.bn.bias'
+Freezing layer 'model.3.conv.weight'
+Freezing layer 'model.3.bn.weight'
+Freezing layer 'model.3.bn.bias'
+Freezing layer 'model.4.cv1.conv.weight'
+Freezing layer 'model.4.cv1.bn.weight'
+Freezing layer 'model.4.cv1.bn.bias'
+Freezing layer 'model.4.cv2.conv.weight'
+Freezing layer 'model.4.cv2.bn.weight'
+Freezing layer 'model.4.cv2.bn.bias'
+Freezing layer 'model.4.m.0.cv1.conv.weight'
+Freezing layer 'model.4.m.0.cv1.bn.weight'
+Freezing layer 'model.4.m.0.cv1.bn.bias'
+Freezing layer 'model.4.m.0.cv2.conv.weight'
+Freezing layer 'model.4.m.0.cv2.bn.weight'
+Freezing layer 'model.4.m.0.cv2.bn.bias'
+Freezing layer 'model.5.conv.weight'
+Freezing layer 'model.5.bn.weight'
+Freezing layer 'model.5.bn.bias'
+Freezing layer 'model.6.cv1.conv.weight'
+Freezing layer 'model.6.cv1.bn.weight'
+Freezing layer 'model.6.cv1.bn.bias'
+Freezing layer 'model.6.cv2.conv.weight'
+Freezing layer 'model.6.cv2.bn.weight'
+Freezing layer 'model.6.cv2.bn.bias'
+Freezing layer 'model.6.m.0.cv1.conv.weight'
+Freezing layer 'model.6.m.0.cv1.bn.weight'
+Freezing layer 'model.6.m.0.cv1.bn.bias'
+Freezing layer 'model.6.m.0.cv2.conv.weight'
+Freezing layer 'model.6.m.0.cv2.bn.weight'
+Freezing layer 'model.6.m.0.cv2.bn.bias'
+Freezing layer 'model.6.m.0.cv3.conv.weight'
+Freezing layer 'model.6.m.0.cv3.bn.weight'
+Freezing layer 'model.6.m.0.cv3.bn.bias'
+Freezing layer 'model.6.m.0.m.0.cv1.conv.weight'
+Freezing layer 'model.6.m.0.m.0.cv1.bn.weight'
+Freezing layer 'model.6.m.0.m.0.cv1.bn.bias'
+Freezing layer 'model.6.m.0.m.0.cv2.conv.weight'
+Freezing layer 'model.6.m.0.m.0.cv2.bn.weight'
+Freezing layer 'model.6.m.0.m.0.cv2.bn.bias'
+Freezing layer 'model.6.m.0.m.1.cv1.conv.weight'
+Freezing layer 'model.6.m.0.m.1.cv1.bn.weight'
+Freezing layer 'model.6.m.0.m.1.cv1.bn.bias'
+Freezing layer 'model.6.m.0.m.1.cv2.conv.weight'
+Freezing layer 'model.6.m.0.m.1.cv2.bn.weight'
+Freezing layer 'model.6.m.0.m.1.cv2.bn.bias'
+Freezing layer 'model.7.conv.weight'
+Freezing layer 'model.7.bn.weight'
+Freezing layer 'model.7.bn.bias'
+Freezing layer 'model.8.cv1.conv.weight'
+Freezing layer 'model.8.cv1.bn.weight'
+Freezing layer 'model.8.cv1.bn.bias'
+Freezing layer 'model.8.cv2.conv.weight'
+Freezing layer 'model.8.cv2.bn.weight'
+Freezing layer 'model.8.cv2.bn.bias'
+Freezing layer 'model.8.m.0.cv1.conv.weight'
+Freezing layer 'model.8.m.0.cv1.bn.weight'
+Freezing layer 'model.8.m.0.cv1.bn.bias'
+Freezing layer 'model.8.m.0.cv2.conv.weight'
+Freezing layer 'model.8.m.0.cv2.bn.weight'
+Freezing layer 'model.8.m.0.cv2.bn.bias'
+Freezing layer 'model.8.m.0.cv3.conv.weight'
+Freezing layer 'model.8.m.0.cv3.bn.weight'
+Freezing layer 'model.8.m.0.cv3.bn.bias'
+Freezing layer 'model.8.m.0.m.0.cv1.conv.weight'
+Freezing layer 'model.8.m.0.m.0.cv1.bn.weight'
+Freezing layer 'model.8.m.0.m.0.cv1.bn.bias'
+Freezing layer 'model.8.m.0.m.0.cv2.conv.weight'
+Freezing layer 'model.8.m.0.m.0.cv2.bn.weight'
+Freezing layer 'model.8.m.0.m.0.cv2.bn.bias'
+Freezing layer 'model.8.m.0.m.1.cv1.conv.weight'
+Freezing layer 'model.8.m.0.m.1.cv1.bn.weight'
+Freezing layer 'model.8.m.0.m.1.cv1.bn.bias'
+Freezing layer 'model.8.m.0.m.1.cv2.conv.weight'
+Freezing layer 'model.8.m.0.m.1.cv2.bn.weight'
+Freezing layer 'model.8.m.0.m.1.cv2.bn.bias'
+Freezing layer 'model.9.cv1.conv.weight'
+Freezing layer 'model.9.cv1.bn.weight'
+Freezing layer 'model.9.cv1.bn.bias'
+Freezing layer 'model.9.cv2.conv.weight'
+Freezing layer 'model.9.cv2.bn.weight'
+Freezing layer 'model.9.cv2.bn.bias'
+[34m[1mtrain: [0mFast image access  (ping: 0.1±0.0 ms, read: 741.0±596.6 MB/s, size: 2101.6 KB)
+[K[34m[1mtrain: [0mScanning C:\Users\mehrotraavishi\Desktop\waste_controller\data\processed\yolo\labels\train.cache... 1197 images, 25 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 1197/1197  0.0s
+[34m[1mval: [0mFast image access  (ping: 0.0±0.0 ms, read: 1769.4±1434.9 MB/s, size: 3107.8 KB)
+[K[34m[1mval: [0mScanning C:\Users\mehrotraavishi\Desktop\waste_controller\data\processed\yolo\labels\val.cache... 150 images, 1 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 150/150  0.0s
+[34m[1moptimizer:[0m 'optimizer=auto' found, ignoring 'lr0=0.01' and determining best 'optimizer' and 'lr0' automatically... 
+[34m[1moptimizer:[0m AdamW(lr=0.001111, momentum=0.9) with parameter groups 134 weight(decay=0.0), 154 weight(decay=0.0005), 154 bias(decay=0.0)
+Plotting labels to C:\Users\mehrotraavishi\Desktop\waste_controller\experiments\runs\yolo26n-seg\labels.jpg... 
+Using 1197 train, 150 val images for fraction=1.0 at imgsz=416
+Using 0 dataloader workers
+Logging results to [1mC:\Users\mehrotraavishi\Desktop\waste_controller\experiments\runs\yolo26n-seg[0m
+Starting training for 30 epochs...
+
+      Epoch    GPU_mem   box_loss   seg_loss   cls_loss    l1_loss   sem_loss  Instances       Size
+[K       1/30         0G      2.644      3.754      8.686     0.0103      9.655         27        416: 0% ──────────── 0/150  3.3s[K       1/30         0G      2.396      3.354       8.25    0.01038      9.546         27        416: 0% ──────────── 1/150 5.3s/it 4.8s<13:08[K       1/30         0G        2.2       3.31      8.893   0.009341       9.55         15        416: 1% ──────────── 2/150 2.7s/it 6.1s<6:44[K       1/30         0G      2.053       3.32      8.454   0.009561      9.518         27        416: 2% ──────────── 3/150 2.4s/it 7.9s<5:46[K       1/30         0G      1.997      3.175       8.35   0.008951      9.502         23        416: 2% ──────────── 4/150 1.9s/it 9.3s<4:41[K       1/30         0G      1.953      3.262      8.272   0.008918       9.51         25        416: 3% ──────────── 5/150 1.8s/it 10.7s<4:14[K       1/30         0G      1.924      3.161       8.12   0.008937      9.498         28        416: 4% ──────────── 6/150 1.8s/it 12.6s<4:19[K       1/30         0G      1.874      3.005      8.025   0.008739      9.501         23        416: 4% ╸─────────── 7/150 1.7s/it 14.0s<3:58[K       1/30         0G       1.86      3.029      7.765   0.008771      9.503         40        416: 5% ╸─────────── 8/150 1.8s/it 16.2s<4:13[K       1/30         0G      1.841      3.056      7.629   0.008733      9.482         39        416: 6% ╸─────────── 9/150 1.8s/it 18.2s<4:19[K       1/30         0G      1.835      3.262      7.676   0.009082      9.482         23        416: 6% ╸─────────── 10/150 1.9s/it 20.2s<4:24[K       1/30         0G      1.864      3.376      7.727   0.009339      9.483         30        416: 7% ╸─────────── 11/150 2.0s/it 22.4s<4:33[K       1/30         0G      1.828       3.34        7.7   0.009135      9.487         25        416: 8% ╸─────────── 12/150 1.9s/it 24.0s<4:16[K       1/30         0G      1.815      3.323      7.681   0.009045       9.48         27        416: 8% ━─────────── 13/150 1.8s/it 25.6s<4:05[K       1/30         0G      1.802      3.301      7.664   0.008987      9.463         24        416: 9% ━─────────── 14/150 1.8s/it 27.4s<4:01[K       1/30         0G      1.784      3.307       7.69   0.009031      9.453         21        416: 10% ━─────────── 15/150 1.8s/it 29.1s<3:59[K       1/30         0G      1.772      3.254      7.673   0.009044      9.446         24        416: 10% ━─────────── 16/150 1.7s/it 30.7s<3:50[K       1/30         0G      1.809      3.303      7.807   0.009012      9.442         23        416: 11% ━─────────── 17/150 1.7s/it 32.4s<3:48[K       1/30         0G        1.8      3.277      7.968   0.009016      9.434         13        416: 12% ━─────────── 18/150 1.7s/it 34.3s<3:50[K       1/30         0G      1.787       3.34      7.971   0.008936      9.419         24        416: 12% ━╸────────── 19/150 1.7s/it 35.9s<3:44[K       1/30         0G      1.769      3.368      7.921   0.008772      9.414         32        416: 13% ━╸────────── 20/150 1.7s/it 37.7s<3:44[K       1/30         0G      1.776      3.467      7.924   0.008827      9.413         32        416: 14% ━╸────────── 21/150 1.6s/it 39.1s<3:28[K       1/30         0G      1.756      3.417      7.953   0.008956      9.398         15        416: 14% ━╸────────── 22/150 1.7s/it 40.8s<3:32[K       1/30         0G       1.74      3.402      7.857   0.008908      9.381         36        416: 15% ━╸────────── 23/150 1.8s/it 43.3s<3:53[K       1/30         0G      1.747      3.407      7.792   0.008976      9.364         34        416: 16% ━╸────────── 24/150 1.9s/it 45.3s<3:59[K       1/30         0G      1.734      3.386        7.7   0.008923      9.354         36        416: 16% ━━────────── 25/150 1.7s/it 46.8s<3:39[K       1/30         0G      1.727      3.379      7.657   0.008879      9.343         29        416: 17% ━━────────── 26/150 1.6s/it 48.2s<3:22[K       1/30         0G      1.726      3.387      7.609   0.009025      9.324         31        416: 18% ━━────────── 27/150 1.7s/it 50.3s<3:35[K       1/30         0G      1.727        3.4      7.553   0.008998      9.316         35        416: 18% ━━────────── 28/150 1.9s/it 53.0s<3:58[K       1/30         0G      1.715      3.384      7.479   0.008985       9.29         49        416: 19% ━━────────── 29/150 2.1s/it 55.4s<4:10[K       1/30         0G      1.705      3.357      7.503   0.008903      9.273         16        416: 20% ━━────────── 30/150 1.9s/it 57.0s<3:47[K       1/30         0G      1.695      3.349      7.447   0.008854      9.261         42        416: 20% ━━────────── 31/150 2.0s/it 59.2s<3:56[K       1/30         0G      1.681      3.318      7.426   0.008775      9.244         21        416: 21% ━━╸───────── 32/150 1.9s/it 1:01<3:39[K       1/30         0G      1.682      3.283      7.397   0.008702       9.23         33        416: 22% ━━╸───────── 33/150 1.7s/it 1:02<3:20[K       1/30         0G      1.674      3.275      7.356   0.008658      9.221         34        416: 22% ━━╸───────── 34/150 1.7s/it 1:04<3:11[K       1/30         0G      1.673      3.279       7.35   0.008597      9.208         26        416: 23% ━━╸───────── 35/150 1.6s/it 1:05<3:04[K       1/30         0G      1.682      3.295      7.336   0.008599      9.196         29        416: 24% ━━╸───────── 36/150 1.7s/it 1:07<3:12[K       1/30         0G      1.682      3.303      7.306   0.008742      9.183         29        416: 24% ━━╸───────── 37/150 1.6s/it 1:09<2:59[K       1/30         0G      1.685       3.32      7.281   0.008658      9.171         37        416: 25% ━━━───────── 38/150 1.7s/it 1:11<3:15[K       1/30         0G      1.694      3.352      7.229   0.008607      9.159         55        416: 26% ━━━───────── 39/150 1.8s/it 1:13<3:23[K       1/30         0G      1.684       3.34      7.202   0.008583       9.15         25        416: 26% ━━━───────── 40/150 1.8s/it 1:15<3:14[K       1/30         0G      1.684      3.334      7.152     0.0086      9.138         47        416: 27% ━━━───────── 41/150 1.8s/it 1:17<3:19[K       1/30         0G      1.693      3.341      7.106   0.008564      9.131         95        416: 28% ━━━───────── 42/150 2.0s/it 1:19<3:37[K       1/30         0G      1.684      3.325      7.068   0.008564      9.122         27        416: 28% ━━━───────── 43/150 1.9s/it 1:21<3:21[K       1/30         0G      1.694      3.335      7.038   0.008543      9.106         49        416: 29% ━━━╸──────── 44/150 1.8s/it 1:22<3:06[K       1/30         0G      1.703      3.342      6.996    0.00851      9.088         89        416: 30% ━━━╸──────── 45/150 1.9s/it 1:25<3:20[K       1/30         0G      1.706      3.353      6.956    0.00849      9.078         70        416: 30% ━━━╸──────── 46/150 2.0s/it 1:27<3:31[K       1/30         0G      1.701      3.341      6.944     0.0085      9.066         23        416: 31% ━━━╸──────── 47/150 1.8s/it 1:29<3:06

@@ -15,7 +15,7 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 - [x] `.gitignore` (data/, weights/, .venv/, runs/, graphify-out/cache, *.pt), `pyproject.toml`, `requirements.txt` with pinned versions
 - [x] `wastectl/` skeleton + `cli.py` (argparse subcommands from CLAUDE.md §7) + `configs/default.yaml` (target `rigid_plastic`, alert < 0.90, window 30, conf 0.25 draw / 0.40 count, seed 42)
 - [x] `pytest` runs (one smoke test). First commit
-- [ ] Public GitHub repo, push, clone on the GPU laptop. Check RAM/disk, `torch.cuda.is_available()`, and print the GPU name
+- [ ] Public GitHub repo ✅ pushed (github.com/avishi1416/waste_controller) — still to do: clone on the GPU laptop. Check RAM/disk, `torch.cuda.is_available()`, and print the GPU name
 
 ### 1. Data (⏱ 75 min, mostly downloads) 🎮
 - [ ] Download WaRP (D, C, S), TACO, TrashNet into `data/raw/`. Record URL, version, licence (or "unstated"), citation and download date for each. **ZeroWaste: not used today (gap)**

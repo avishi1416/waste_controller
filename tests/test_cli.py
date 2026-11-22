@@ -20,7 +20,16 @@ def test_config_missing_keys_rejected(tmp_path):
 
 
 def test_unbuilt_command_fails_loudly():
-    assert main(["bench"]) == 2
+    assert main(["demo"]) == 2
+
+
+def test_missing_weights_is_a_clean_error(tmp_path, capsys):
+    from wastectl.vision.pipeline import Pipeline  # noqa: F401  (needs ultralytics importable)
+
+    img = tmp_path / "x.jpg"
+    img.write_bytes(b"")
+    assert main(["infer", str(img)]) == 1
+    assert "not trained yet" in capsys.readouterr().err
 
 
 def test_parser_rejects_unknown_model():

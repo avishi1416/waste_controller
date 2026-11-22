@@ -43,14 +43,14 @@ Legend: 💻 dev laptop (CPU) · 🎮 GPU laptop (RTX 4050 6 GB, AMP on) · ⏱ 
 
 ### 4. Main pipeline + purity (⏱ 60 min) 💻
 - [x] `wastectl/purity.py`: count-based purity, contamination flag, 30-frame window, conf thresholds. Unit-tested on toy detections
-- [ ] `vision/pipeline.py`: YOLO-seg → crops → classifier → per-class semantic map → purity. Works on an image and on an image sequence/video
-- [ ] `infer` CLI → annotated image/video + JSON
+- [x] `vision/pipeline.py`: YOLO-seg → crops → classifier → per-class semantic map → purity. Works on an image and on an image sequence/video _(logic tested with a fake detector; real-weights smoke test pending — GitHub asset download times out on dev laptop)_
+- [x] `infer` CLI → annotated image/video + JSON
 
 ### 5. Evaluation core (⏱ 45 min) 💻/🎮
 - [ ] Metrics: mAP@0.5 / 0.5:0.95, macro F1, mask IoU, purity, FPS + peak memory (CPU dev laptop and RTX 4050)
 - [ ] Confusion matrices (detector + classifiers), per-source breakdown
 - [ ] Benchmark table: YOLO-seg vs ResNet-18 vs GoogLeNet (this satisfies the brief's "≥ 2 architectures")
-- [ ] `bench` CLI
+- [x] `bench` CLI
 
 ### 6. Streamlit app, core (⏱ 45 min) 💻
 - [ ] Analyzer: upload image → boxes, masks, classes, purity, contamination flag

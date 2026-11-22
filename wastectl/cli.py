@@ -42,16 +42,30 @@ def build_parser() -> argparse.ArgumentParser:
         sp.add_argument("--fraction", type=float, default=1.0, help="yolo: train on a fraction of the data (smoke runs)")
         sp.add_argument("--workers", type=int, default=4)
         sp.add_argument("--split", default="test", help="eval split")
-    sub.add_parser("bench", help="FPS / memory benchmark")
-    infer = sub.add_parser("infer", help="run the pipeline on an image or video")
+    bench = sub.add_parser("bench", help="FPS / memory benchmark")
+    bench.add_argument("--images", default=None, help="folder of images (default: test split, else val)")
+    bench.add_argument("-n", type=int, default=50)
+    infer = sub.add_parser("infer", help="run the pipeline on an image, video, or folder of frames")
     infer.add_argument("source")
     infer.add_argument("--stream", default=None, help="target stream (default: config purity.target_stream)")
+    infer.add_argument("--out", default=None, help="output folder (default: experiments/infer)")
+    for sp in (bench, infer):
+        sp.add_argument("--device", default="cpu")
+        sp.add_argument("--weights", default=None, help="YOLO weights override (e.g. a pretrained model for smoke tests)")
     sub.add_parser("demo", help="launch the demo app")
     return p
 
 
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
+    try:
+        return _run(args)
+    except FileNotFoundError as e:  # e.g. untrained model: say so plainly instead of a traceback
+        print(f"wastectl {args.command}: {e}", file=sys.stderr)
+        return 1
+
+
+def _run(args) -> int:
     cfg = load_config(args.config)  # fail fast on a broken config
     if args.command == "fundamentals":
         from wastectl.fundamentals.demos import run
@@ -93,6 +107,28 @@ def main(argv=None) -> int:
                     classifier.train(cfg, b, args.epochs or 10, args.batch or 64, workers=args.workers, device=args.device)
                 else:
                     print(json.dumps(classifier.evaluate(cfg, b, args.split, args.device), indent=2))
+        return 0
+    if args.command == "infer":
+        from wastectl.vision.pipeline import infer
+
+        out = args.out or f"{cfg['paths']['experiments']}/infer"
+        r = infer(cfg, args.source, out, args.stream, args.device, args.weights)
+        print(json.dumps(r["purity"], indent=2) if isinstance(r, dict) else f"{len(r)} frames", f"-> {out}/")
+        return 0
+    if args.command == "bench":
+        from pathlib import Path
+
+        from wastectl.explog import log_run
+        from wastectl.vision.pipeline import IMG_EXT, bench
+
+        yolo = Path(cfg["paths"]["data_processed"]) / "yolo" / "images"
+        folder = Path(args.images) if args.images else next((yolo / s for s in ("test", "val") if (yolo / s).exists()), None)
+        if folder is None:
+            raise SystemExit("no images to benchmark: pass --images or run `data prepare`")
+        imgs = sorted(p for p in folder.iterdir() if p.suffix.lower() in IMG_EXT)[: args.n]
+        m = bench(cfg, imgs, args.device, args.weights)
+        log_run(cfg, "bench", m, {"images": str(folder)})
+        print(json.dumps(m, indent=2))
         return 0
     print(f"wastectl {args.command}: not implemented yet (TODO.md {TODO_REF[args.command]})", file=sys.stderr)
     return 2

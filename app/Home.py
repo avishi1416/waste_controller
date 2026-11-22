@@ -30,8 +30,9 @@ with left:
     upload = st.file_uploader("Photo", type=["jpg", "jpeg", "png"])
     sample = st.selectbox("Or try a held-out test photo", ["—"] + [p.name for p in samples]) if samples else "—"
     conf = st.slider("Minimum confidence to show", 0.05, 0.9, float(cfg["purity"]["conf_draw"]), 0.05)
-    target = st.selectbox("Stream to check for contamination (optional)", list(LABELS),
-                          index=list(LABELS).index(cfg["purity"]["target_stream"]), format_func=LABELS.get)
+    check = st.toggle("Check a recycling stream for contamination")
+    target = st.selectbox("Stream", list(LABELS), index=list(LABELS).index(cfg["purity"]["target_stream"]),
+                          format_func=LABELS.get, disabled=not check)
 
 bgr = None
 if upload is not None:
@@ -48,23 +49,24 @@ with right:
     pipe.conf_draw = conf
     with st.spinner("Finding waste…"):
         r = pipe.analyze(bgr, target)
-    st.image(cv2.cvtColor(pipe.annotate(bgr, r), cv2.COLOR_BGR2RGB), width="stretch")
+    st.image(cv2.cvtColor(pipe.annotate(bgr, r, stream=check), cv2.COLOR_BGR2RGB), width="stretch")
     counts = Counter(d["cls"] for d in r["detections"])
     legend(counts)
 
 dets = r["detections"]
 with left:
     st.metric("Items found", len(dets))
-    p = r["purity"]["purity"]
-    st.metric(f"{LABELS[target]} share", "—" if p is None else f"{p:.0%}",
-              help="Share of confidently detected items that belong to the chosen stream.")
+    if check:
+        p = r["purity"]["purity"]
+        st.metric(f"{LABELS[target]} share", "—" if p is None else f"{p:.0%}",
+                  help="Share of confidently detected items that belong to the chosen stream; red boxes are contaminants.")
     st.caption(f"Analysed in {r['latency_s'] * 1000:.0f} ms on CPU")
 
 if dets:
     st.subheader("What it found")
     st.dataframe(
         [{"Material": LABELS[d["cls"]], "Confidence": round(d["conf"], 2),
-          "Counts toward share": d["conf"] >= cfg["purity"]["conf_count"]} for d in sorted(dets, key=lambda d: -d["conf"])],
+          "Confident (counts)": d["conf"] >= cfg["purity"]["conf_count"]} for d in sorted(dets, key=lambda d: -d["conf"])],
         width="stretch", hide_index=True,
     )
 else:

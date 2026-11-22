@@ -29,3 +29,13 @@ def test_explog_appends(tmp_path):
     log_run(cfg, "unit", {"f1": 0.6})
     runs = read_runs(cfg)
     assert [r["metrics"]["f1"] for r in runs] == [0.5, 0.6] and runs[0]["seed"] == 42
+
+
+def test_box_iou_and_size_summary():
+    from wastectl.eval.size_recall import box_iou, summarise
+
+    boxes = np.array([[0, 0, 1, 1], [0.5, 0.5, 1.5, 1.5], [2, 2, 3, 3]], float)
+    assert np.allclose(box_iou([0, 0, 1, 1], boxes), [1.0, 0.25 / 1.75, 0.0])
+    rows = [(0.001, False, False)] * 3 + [(0.01, True, False)] * 3 + [(0.1, True, True)] * 3
+    s = summarise(rows)
+    assert [t["found"] for t in s["terciles"]] == [0.0, 1.0, 1.0] and s["terciles"][2]["found_right_class"] == 1.0

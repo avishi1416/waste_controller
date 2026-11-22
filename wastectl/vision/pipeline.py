@@ -88,7 +88,8 @@ class Pipeline:
         return {"detections": dets, "semantic": semantic, "latency_s": latency,
                 "purity": frame_purity(dets, target, self.conf_count), "target": target}
 
-    def annotate(self, bgr, result):
+    def annotate(self, bgr, result, stream=False):
+        """Material-coloured masks and boxes. stream=True adds the contamination view (red boxes + purity header)."""
         out = bgr.copy()
         overlay = bgr.copy()
         for i, c in enumerate(self.classes):
@@ -97,11 +98,13 @@ class Pipeline:
         for d in result["detections"]:
             x1, y1, x2, y2 = map(int, d["box"])
             col = COLORS[d["cls"]]
-            contaminant = d["cls"] != result["target"] and d["conf"] >= self.conf_count
+            contaminant = stream and d["cls"] != result["target"] and d["conf"] >= self.conf_count
             cv2.rectangle(out, (x1, y1), (x2, y2), (0, 0, 255) if contaminant else col, 3 if contaminant else 2)
             label = f"{d['cls']} {d['conf']:.2f}" + (" CONTAMINANT" if contaminant else "")
             cv2.putText(out, label, (x1, max(15, y1 - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 0), 3)
             cv2.putText(out, label, (x1, max(15, y1 - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 1)
+        if not stream:
+            return out
         p = result["purity"]
         txt = f"stream: {result['target']} | purity: " + ("n/a" if p["purity"] is None else f"{p['purity']:.0%}")
         cv2.putText(out, txt, (10, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 4)
@@ -133,13 +136,14 @@ def _jsonable(r):
 
 def infer(cfg, source, out_dir, target=None, device="cpu", yolo_weights=None, fps=10):
     pipe = Pipeline(cfg, yolo_weights=yolo_weights, device=device)
+    show_stream = target is not None  # contamination view only when a stream is requested
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     src = Path(source)
     if src.is_file() and src.suffix.lower() in IMG_EXT:
         bgr = cv2.imread(str(src))
         r = pipe.analyze(bgr, target)
-        cv2.imwrite(str(out / f"{src.stem}_annotated.jpg"), pipe.annotate(bgr, r))
+        cv2.imwrite(str(out / f"{src.stem}_annotated.jpg"), pipe.annotate(bgr, r, show_stream))
         (out / f"{src.stem}.json").write_text(json.dumps({**_jsonable(r), "models": pipe.status}, indent=2), encoding="utf-8")
         return r
     monitor = StreamMonitor.from_config(cfg, target)
@@ -149,7 +153,7 @@ def infer(cfg, source, out_dir, target=None, device="cpu", yolo_weights=None, fp
         s = monitor.update(r["detections"])
         timeline.append({"frame": i, **{k: s[k] for k in ("purity", "window_purity", "alert", "n_total", "contaminants")},
                          "latency_s": r["latency_s"]})
-        img = pipe.annotate(bgr, r)
+        img = pipe.annotate(bgr, r, stream=True)  # stream monitoring always shows purity
         if s["alert"]:
             cv2.putText(img, "CONTAMINATION ALERT", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 3)
         if writer is None:

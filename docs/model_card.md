@@ -25,15 +25,20 @@ Every run is logged in `experiments/experiments.jsonl` (config, seed, git commit
 ## Results
 1-epoch timing run (validation split): box mAP@0.5 0.137, mask mAP@0.5 0.127; 36 ms per image inference on CPU.
 
-Full run (test split, 150 photos): _filled in after training_.
+Full run: 30 epochs, 2.1 h. Best epoch chosen on validation (box mAP@0.5 0.266, mask 0.248).
 
-| Metric | Test |
+| Metric | Test (150 photos) |
 |---|---|
-| Mask mAP@0.5 | _pending_ |
-| Mask mAP@0.5:0.95 | _pending_ |
-| Box mAP@0.5 | _pending_ |
-| Box mAP@0.5:0.95 | _pending_ |
-| End-to-end CPU latency | _pending_ |
+| Mask mAP@0.5 | **0.209** |
+| Mask mAP@0.5:0.95 | 0.142 |
+| Box mAP@0.5 | **0.211** |
+| Box mAP@0.5:0.95 | 0.154 |
+| End-to-end CPU latency | 70 ms mean (14.3 images/s) |
+
+Per material (box AP@0.5:0.95, test): metal 0.268 · cardboard 0.172 · rigid plastic 0.152 · soft plastic 0.100 · other 0.077.
+
+By object size (test, IoU ≥ 0.5): found 1% of the smallest third, 43% of the middle third, 74% of the largest third;
+the material is right on about half of the found items.
 
 ## Intended use
 - Demonstrating waste detection and segmentation for a course project; exploring what a sorting-line vision

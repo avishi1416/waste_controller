@@ -68,15 +68,21 @@ dfl loss (distribution focal loss for box edges) and a semantic loss. All should
 - **Macro F1** = unweighted mean of per-class F1, where F1 = 2PR/(P+R). It treats rare classes equally.
 - **Purity** (bonus) = items of the target material ÷ all confidently detected items.
 
-## 6. Results (fill in from `docs/report.pdf` after training)
+## 6. Results (final)
 | | Value |
 |---|---|
-| Mask mAP@0.5 (test) | _____ |
-| Box mAP@0.5 (test) | _____ |
-| Speed on laptop CPU | ~36 ms per image inference (measured in the timing run) |
-| Progress | epoch 1: mask mAP@0.5 0.123 → epoch 2: 0.173 (validation) |
+| **Mask mAP@0.5 (test)** | **0.209** (strict 0.5:0.95: 0.142) |
+| **Box mAP@0.5 (test)** | **0.211** (strict: 0.154) |
+| Validation (best epoch) | box 0.266, mask 0.248, slightly optimistic because it chose the epoch |
+| Speed on laptop CPU | **14.3 images/s**, 70 ms end to end |
+| Training | 30 epochs, 2.1 h, CPU only |
+| Best / worst material | metal 0.27 / *other* 0.08 (box AP@0.5:0.95) |
+| By size | finds **74%** of large items, 43% of medium, **1%** of small |
+| Learning curve | val mask mAP@0.5: 0.123 (epoch 1) → 0.225 (epoch 3) → 0.249 (epoch 13), then plateau |
 
-Expect roughly 0.2–0.4 mask mAP@0.5. TACO is hard: small objects, cluttered outdoor scenes.
+**How to explain the numbers:** a nano model, CPU, 2 hours, hard outdoor dataset. It handles clear, larger
+items; tiny items (caps, tabs) are only a few pixels at 416 px, so they're missed. Test is lower than validation
+because validation was used to pick the best epoch, and each split has only 150 photos.
 
 ## 7. Fundamentals I built from scratch (NumPy, no DL library)
 | Concept | What I showed | Key number |

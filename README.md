@@ -13,10 +13,15 @@ rules), written from scratch in NumPy.
 
 | Metric | Value |
 |---|---|
-| Mask mAP@0.5 (segmentation) | _pending training_ |
-| Mask mAP@0.5:0.95 | _pending_ |
-| Box mAP@0.5 (detection) | _pending_ |
-| Speed, laptop CPU | _pending_ |
+| Mask mAP@0.5 (segmentation) | **0.209** |
+| Mask mAP@0.5:0.95 | 0.142 |
+| Box mAP@0.5 (detection) | **0.211** |
+| Box mAP@0.5:0.95 | 0.154 |
+| Speed, laptop CPU (end to end) | **14.3 images/s** (70 ms mean) |
+| Training | 30 epochs, 2.1 h on a Snapdragon X CPU, no GPU |
+
+Best material: metal (box AP@0.5:0.95 0.27); weakest: *other* (0.08). Found 74% of large items but only 1% of the
+smallest third, which is the main failure mode (see the error analysis in the report).
 
 ## Quick start
 

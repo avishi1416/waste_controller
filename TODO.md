@@ -22,14 +22,14 @@ Anything unticked at submission goes into the report's **Gaps** section.
 ## 2. Training on the OmniBook (⏱ ~1.5–3 h, runs in background)
 - [x] Pretrained `weights/yolo26n-seg.pt` downloaded
 - [x] 1-epoch timing run → choose the epoch count that fits _(≈4 min/epoch → 30 epochs ≈ 2 h; val mask mAP50 0.127 after 1 epoch)_
-- [ ] Full training run → `weights/yolo26n-seg_waste.pt`, logged to experiments.jsonl
-- [ ] Laptop stays plugged in, sleep disabled, heavy apps closed (8 GB RAM)
+- [x] Full training run → `weights/yolo26n-seg_waste.pt`, logged to experiments.jsonl _(30 epochs, 2.1 h; val box 0.266 / mask 0.248)_
+- [x] Laptop stays plugged in, sleep disabled, heavy apps closed (8 GB RAM)
 
 ## 3. Evaluation (⏱ 20 min)
-- [ ] Test split: box mAP@0.5 / 0.5:0.95, **mask mAP@0.5 / 0.5:0.95**, per-class AP
-- [ ] Confusion matrix + PR curves (Ultralytics plots) copied to `experiments/`
-- [ ] `bench`: CPU latency / FPS on the test images
-- [ ] Failure gallery: what it misses (small/cluttered items) and why
+- [x] Test split: box mAP@0.5 / 0.5:0.95, **mask mAP@0.5 / 0.5:0.95**, per-class AP _(box 0.211 / mask 0.209; metal best, other worst)_
+- [x] Confusion matrix + PR curves (Ultralytics plots) copied to `experiments/`
+- [x] `bench`: CPU latency / FPS on the test images
+- [x] Failure analysis: recall by object size (1% small / 43% medium / 74% large) + confusion matrix → report section 7
 
 ## 4. Streamlit app (⏱ 45 min, built while training runs)
 - [x] Upload a photo → masks + boxes + waste type + confidence, counts per class
@@ -38,11 +38,11 @@ Anything unticked at submission goes into the report's **Gaps** section.
 - [x] Professional look; honest "model not trained yet" state; education/research-use footer
 
 ## 5. Docs (⏱ 30 min)
-- [ ] README: install, commands, results table, limitations, licence/use notice
+- [x] README: install, commands, results table, limitations, licence/use notice
 - [x] Dataset card (TACO: source, licence, class mapping, splits, counts) + model card (YOLO26n-seg)
 
 ## 6. Demo (⏱ 20 min)
-- [ ] 6–10 curated test photos that show it working (plus 1–2 honest failures)
+- [x] 6 curated test photos (one per material first) in report + slides; app lists test photos to pick from
 - [ ] End-to-end rehearsal of the 4-minute demo
 
 ## 7. Report + slides (⏱ 1–1.5 h)

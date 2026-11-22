@@ -141,7 +141,7 @@ s.addNotes("The model is YOLO26n-seg: a small one-stage network that predicts bo
 pres.addSection({ title: "Demo" });
 s = pres.addSlide({ masterName: "Content", sectionTitle: "Demo" });
 s.addText("It outlines and names each item", { placeholder: "title" });
-const preds = fs.existsSync(path.join(EXP, "report_assets")) ? fs.readdirSync(path.join(EXP, "report_assets")).filter((f) => f.startsWith("pred_")).slice(0, 3) : [];
+const preds = (S.gallery || []).slice(0, 3); // report's picks: one clear example per material first
 [0, 1, 2].forEach((i) => pic(s, path.join(EXP, "report_assets", preds[i] || "pred_missing.jpg"), 0.5 + i * 3.05, 1.2, 2.9, 3.3, "Model prediction on a held-out test photo"));
 chips(s, 0.5, 4.75, null, false);
 s.addNotes("Here are predictions on test photos the model never saw. Each item gets an outline in its material colour, a box, and a confidence score. [Switch to the live Streamlit app: upload a photo or pick a test photo.]");
@@ -161,7 +161,7 @@ s.addChart(pres.charts.BAR, [{ name: "AP", labels: MAT.map((x) => x[1]), values:
   valGridLine: { style: "none" }, catGridLine: { style: "none" }, showLegend: false,
   showTitle: true, title: "Detection AP@0.5:0.95 per material (test)", titleFontSize: 13, titleColor: MUTED, titleFontFace: "+mn-lt",
 });
-s.addNotes("On 150 held-out photos the model reaches these scores. It is strongest on the common classes and weakest on cardboard, which has the fewest examples. It runs in real time on a laptop CPU.");
+s.addNotes("On 150 held-out photos it reaches these scores. Metal is its best material. The biggest weakness is size: it finds about three in four large items but almost none of the tiny ones like bottle caps, because at 416 pixels they are only a few pixels wide. It runs at about 14 photos per second on a laptop CPU.");
 
 // 7. Fundamentals
 pres.addSection({ title: "Fundamentals" });

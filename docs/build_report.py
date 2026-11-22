@@ -20,6 +20,7 @@ from wastectl.config import load_config  # noqa: E402
 from wastectl.explog import read_runs  # noqa: E402
 
 EXP = ROOT / "experiments"
+GALLERY = []  # prediction images in pick order (one per material first), reused by the slides
 AUTHOR = "Avishi Mehrotra"
 ROLL = "[Roll number]"  # owner fills in
 COURSE = "CSAI3027P Deep Learning · Project-Based Learning"
@@ -61,20 +62,29 @@ def gallery(cfg, n=6):
     from wastectl.vision.pipeline import Pipeline
 
     pipe = Pipeline(cfg, yolo_weights=w, device="cpu", use_classifier=False)
-    scored = []
-    for p in sorted(test.glob("*.jpg")):
-        r = pipe.analyze(str(p))
-        good = [d for d in r["detections"] if d["conf"] >= 0.4]
-        scored.append((len(good) + sum(d["conf"] for d in good), p, r))
+    results = [(p, pipe.analyze(str(p))) for p in sorted(test.glob("*.jpg"))]
+    # one clear example per material first (highest-confidence detection of that class), then fill by overall confidence
+    picked = []
+    for c in LABELS:
+        best = max(((max((d["conf"] for d in r["detections"] if d["cls"] == c), default=0), p, r) for p, r in results
+                    if p not in [q for q, _ in picked]), key=lambda t: t[0])
+        if best[0] > 0:
+            picked.append((best[1], best[2]))
+    rest = sorted(((sum(d["conf"] for d in r["detections"] if d["conf"] >= 0.4), p, r) for p, r in results
+                   if p not in [q for q, _ in picked]), key=lambda t: -t[0])
+    picked += [(p, r) for _, p, r in rest[: max(0, n - len(picked))]]
+    for old in out.glob("pred_*.jpg"):
+        old.unlink()  # don't let stale picks leak into the slides
     out.mkdir(parents=True, exist_ok=True)
     cells = []
-    for _, p, r in sorted(scored, key=lambda t: -t[0])[:n]:
+    for p, r in picked[:n]:
         bgr = cv2.imread(str(p))
         a = pipe.annotate(bgr, r)
         h = 420
         a = cv2.resize(a, (int(a.shape[1] * h / a.shape[0]), h))
         f = out / f"pred_{p.stem}.jpg"
         cv2.imwrite(str(f), a, [cv2.IMWRITE_JPEG_QUALITY, 85])
+        GALLERY.append(f.name)
         names = ", ".join(sorted({LABELS[d["cls"]] for d in r["detections"] if d["conf"] >= 0.4})) or "—"
         cells.append(img(f, f"{html.escape(p.stem)}: {names}"))
     return '<div class="grid3">' + "".join(cells) + "</div>"
@@ -140,6 +150,16 @@ def build():
     epochs = tr["params"].get("epochs") if tr else "—"
     hours = f"{tr['wall_time_s'] / 3600:.1f} h" if tr and tr.get("wall_time_s") else "—"
     fps = bench["metrics"]["fps"] if bench else None
+    tr_val = latest(runs, "train-yolo")
+    val_mask = tr_val["metrics"].get("mask_map50") if tr_val else None
+    sr_path = EXP / "eval" / "size_recall_test.json"
+    if sr_path.exists():
+        sr = json.loads(sr_path.read_text(encoding="utf-8"))
+        size_table = table(["Object size (share of photo)", "Objects", "Found", "Found, right material"],
+                           [[f"{t['name'].capitalize()} ({t['area_pct'][0]:.2f}–{t['area_pct'][1]:.2f}%)", t["n"], f"{t['found']:.0%}", f"{t['found_right_class']:.0%}"]
+                            for t in sr["terciles"]] + [["<b>All</b>", sr["n"], f"{sr['found']:.0%}", f"{sr['found_right_class']:.0%}"]])
+    else:
+        size_table = '<p class="missing">[run wastectl.eval.size_recall to fill this table]</p>'
 
     kpis = "".join(f'<div class="kpi"><b>{v}</b><span>{k}</span></div>' for k, v in [
         ("Mask mAP@0.5 (segmentation)", fmt(m.get("mask_map50"))), ("Box mAP@0.5 (detection)", fmt(m.get("box_map50"))),
@@ -179,8 +199,8 @@ A single YOLO26n-seg model, pretrained on COCO, was fine-tuned for {epochs} epoc
 entirely on a laptop CPU (Snapdragon X, 8 GB RAM, no GPU). The fundamentals the course requires (neurons, backpropagation,
 optimizers, classical learning rules and regularisation) are implemented from scratch in NumPy and unit-tested.</p>
 <div class="kpis">{kpis}</div>
-<p>On 150 held-out test photos the model reaches the scores above. It works well on clear, medium-sized items and misses
-small or cluttered ones. The training data is outdoor litter rather than conveyor-belt footage, so the recommendation in
+<p>On 150 held-out test photos the model reaches the scores above. It finds about three in four large items but almost none
+of the smallest ones, and gets the material right about half the time on the items it finds. The training data is outdoor litter rather than conveyor-belt footage, so the recommendation in
 Section 8 is <b>go for a demonstrator, no-go for production</b> until it is retrained on recycling-plant data.</p>
 
 <h2>2. Problem and requirements</h2>
@@ -239,11 +259,22 @@ coefficients in a single pass, so it suits a CPU. Merging the instance masks giv
 {gallery(cfg)}
 
 <h2>7. Error analysis</h2>
-<!-- shortcut: draft text written before evaluation; must be checked against the test confusion matrix and failure gallery -->
-<p>Most misses are small items (bottle caps, pop tabs, foil scraps) that occupy a few pixels at 416 px, and items partly hidden
-by leaves or sand. Confusions concentrate between rigid plastic and <i>other</i> (clear plastic vs glass) and between cardboard
-and <i>other</i> (paper vs card), which look alike and are partly a labelling choice. Cardboard has the fewest examples and the
-lowest AP. Larger images, more epochs on a GPU, and conveyor-style data would address the main failure modes.</p>
+<p><b>Small objects are the main failure.</b> Matching each test object to predictions (IoU ≥ 0.5, confidence ≥ 0.25) and
+splitting objects into equal thirds by size:</p>
+{size_table}
+<p>Objects covering less than about 0.2% of the photo (bottle caps, pop tabs, foil scraps) are almost never found: at
+416 px they are only a few pixels across. Large items are found about three times in four.</p>
+<p><b>Material confusion is the second failure.</b> Even among found objects, the material is right only about half the time.
+The normalised confusion matrix (Section 6) shows the largest single effect is <i>missed</i> objects (the background row:
+35% of rigid plastic, 27% of metal and of <i>other</i>, 20% of soft plastic). When the model fires on background (leaves, sand,
+reflections) it most often calls it soft plastic (35%) or <i>other</i> (30%): crumpled film and natural clutter look alike.
+Cardboard predictions scatter across rigid plastic, soft plastic and <i>other</i>, but the test set holds only 27 cardboard
+objects, so that estimate is noisy.</p>
+<p><b>Validation vs test.</b> The best epoch was chosen on the validation split (mask mAP@0.5 {fmt(val_mask)}), so validation is
+slightly optimistic; the untouched test split ({fmt(m.get("mask_map50"))}) is the honest number. With 150 images per split, a few
+points of difference is expected.</p>
+<p><b>What would fix it:</b> a larger input size (640+ px) or tiled inference for small items; more epochs and an unfrozen
+backbone on a GPU; more cardboard examples; and training on conveyor-belt data, where items are larger and backgrounds simpler.</p>
 
 <h2>8. Deployment recommendation</h2>
 {table(["Question", "Evidence", "Verdict"], [
@@ -288,7 +319,7 @@ Individual contribution: this is a solo project; all work is by {AUTHOR}.</p>
     (EXP / "report_assets" / "summary.json").write_text(json.dumps({  # numbers for docs/slides/build_slides.js
         "metrics": m, "fps": fps, "latency_ms": bench["metrics"]["mean_latency_ms"] if bench else None,
         "epochs": epochs, "train_hours": hours, "counts": counts, "images": manifest["images"],
-        "gradcheck": mlp["gradcheck_max_rel_error"], "mlp_acc": mlp["train_accuracy"], "author": AUTHOR,
+        "gallery": GALLERY, "gradcheck": mlp["gradcheck_max_rel_error"], "mlp_acc": mlp["train_accuracy"], "author": AUTHOR,
     }, indent=2), encoding="utf-8")
     doc = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Waste Controller: technical report</title><style>{CSS}</style></head><body>{body}</body></html>'
     out_html = ROOT / "docs" / "report.html"

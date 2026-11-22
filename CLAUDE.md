@@ -185,3 +185,26 @@ When answered, write the answer inline, mark it **ANSWERED**, and move durable d
 - **Q26.** "You can use LSTM and GAN". Read as: the advanced module is **LSTM + DCGAN**, and the **VAE is dropped**. The brief accepts VAE *or* GAN, so this is fine. **Claude's call:** demo polish goes in as P0.5, and P1 order is LSTM → GAN → Faster R-CNN. YOLO vs ResNet vs GoogLeNet already meets the brief's "at least two architectures", so Faster R-CNN is the first thing to cut if time runs out. — **ANSWERED (owner confirmed)**
 - **Q27.** **MIT** licence for the code only. Datasets keep their own licences. — **ANSWERED**
 - **Q21 (specs).** RTX 4050 Laptop, 6 GB VRAM, Intel i5-12450H. 6 GB fits YOLO-seg n/s at 640 (batch ~8–16), Faster R-CNN R50-FPN (batch ~2–4), classifiers, LSTM and GAN. Use AMP.
+
+### Round 3 — data facts found on inspection (22 Nov 2026)
+Checked: WaRP README (AIRI-Institute/WaRP, GitHub licence field: none) and TACO `annotations.json` (1500 images, 4784 annotations, 60 classes).
+- WaRP-D (2452 train / 522 test, 1920×1080) has **bounding boxes only, no masks**. WaRP-C = 8823/1583 crops. WaRP-S = only 112 small images with real masks (4 per class).
+- WaRP's 28 classes: 17 plastic bottles, 3 glass bottles, 2 cardboard, 4 detergent, canister, cans. **It has no soft plastic at all.**
+- TACO has COCO polygon masks; the largest classes are Cigarette (667), Unlabeled litter (517) and Plastic film (451).
+
+- **Q28.** No masks on WaRP-D means YOLO-seg can't learn segmentation from conveyor data as planned. Options:
+  (a) **SAM pseudo-masks:** Ultralytics' built-in `auto_annotate` prompts SAM with each WaRP-D box to produce masks. YOLO-seg then trains on WaRP-D + TACO, and mask IoU is measured on WaRP-S's **real** masks (which exist for exactly this purpose). Pseudo-labels are documented as such.
+  (b) Detection-only YOLO on WaRP, and segmentation learned from TACO only (outdoor images).
+  (c) Train segmentation only on TACO + WaRP-S's 112 images.
+  — Proposed: (a). — **OPEN**
+- **Q29.** `soft_plastic` exists only in TACO, so it can't appear in the WaRP-only test set. — Proposed: keep the class; report its metrics on TACO's validation split, clearly labelled as out-of-domain. — **OPEN**
+- **Q30.** Proposed class mapping (needs approval):
+  - WaRP: `bottle-*` (17) → rigid_plastic; `detergent-*` (4) → rigid_plastic; `canister` → rigid_plastic; `cans` → metal; `juice-cardboard`/`milk-cardboard` → cardboard (these are drink cartons; flagged); `glass-*` (3) → other.
+  - TACO → cardboard: Corrugated carton, Other carton, Egg carton, Meal carton, Pizza box, Toilet tube.
+  - TACO → soft_plastic: Plastic film, Other plastic wrapper, Garbage bag, Single-use carrier bag, Polypropylene bag, Crisp packet, Six pack rings, Plastic gloves.
+  - TACO → rigid_plastic: Clear/Other plastic bottle, Plastic bottle cap, Plastic lid, Disposable/Other plastic cup, Spread tub, Tupperware, Disposable/Other plastic container, Plastic utensils, Plastic straw, Squeezable tube.
+  - TACO → metal: Drink can, Food can, Aerosol, Metal bottle cap, Metal lid, Pop tab, Scrap metal, Aluminium foil, Aluminium blister pack.
+  - TACO → other: all glass, paper, paper cup/straw/bag, Drink carton, foam/styrofoam, Other plastic, Battery, Carded blister pack, Food waste, Rope, Shoe, Cigarette, Unlabeled litter.
+  - TrashNet: cardboard → cardboard, plastic → rigid_plastic, metal → metal, glass/paper/trash → other.
+  - Ambiguous: WaRP drink "cardboard" (really cartons), TACO "Other plastic" (→ other), foam (→ other), and Cigarette/Unlabeled litter (1184 tiny items that will dominate `other`). — **OPEN**
+- **Q31.** Running training: Claude can only run commands on the dev laptop. — Proposed: install Claude Code on the GPU laptop, clone the repo there, and continue in a session that reads this CLAUDE.md/TODO.md. Otherwise the owner runs the commands Claude prepares. — **OPEN**
